@@ -1,0 +1,104 @@
+Group,Field,Type,Example,Source,Allowed use / note
+Identity & address,hh_id,text,HH-0042137,Internal key,Join key across files; never shown to customers
+Identity & address,first_name,text,Jordan,Broker (compiled),Personalization
+Identity & address,last_name,text,Rivera,Broker (compiled),Personalization
+Identity & address,address_line,text,•••• Calvert St,Broker / public record,"Direct mail, geofence"
+Identity & address,unit,text,Apt 2,Broker,Direct mail
+Identity & address,city,text,Woodland Hills,Broker,Filters
+Identity & address,state,text,CA,Broker,Filters; state privacy rules
+Identity & address,zip5,text,91367,Broker,Served-ZIP filter
+Identity & address,zip4,text,2104,CASS,Postal discounts
+Identity & address,county,text,Los Angeles,Public record,Filters
+Identity & address,carrier_route,text,C012,USPS / CASS,EDDM and route mailings
+Identity & address,dpv_confirmed,yes/no,Yes,CASS hygiene,Mail only to deliverable addresses
+Identity & address,ncoa_move_date,date,2026-03-14,NCOA,Update address; new-mover flag
+Identity & address,latitude / longitude,number,"34.17, -118.60",Geocode,"Radius from branch, geofence"
+Contact channels,email,text,j•••@gmail.com,Broker opt-in (co-registration),Email only with opt-in proof; check ESP terms
+Contact channels,email_optin_source,text,sweepstakes-site.com,Broker,Consent provenance
+Contact channels,email_optin_date,date,2026-05-02,Broker,Consent provenance; age of consent
+Contact channels,email_valid_status,enum,valid / risky / invalid,Validation service,Suppress risky and invalid
+Contact channels,mobile_phone,text,(818) •••-••12,Broker,No texts or autodialed / AI calls without consent
+Contact channels,mobile_dnc_flag,yes/no,Yes,National DNC scrub,Never call when Yes
+Contact channels,landline_phone,text,(818) •••-••40,Broker,Manual-dial calls only after DNC scrub
+Contact channels,landline_dnc_flag,yes/no,No,National + state DNC,Suppress when Yes
+Contact channels,litigator_flag,yes/no,No,TCPA litigator scrub,Suppress when Yes
+Contact channels,phone_type,enum,mobile / landline / VoIP,Carrier lookup,Channel rules
+Contact channels,postal_ok,yes/no,Yes,Derived,Direct mail eligibility
+Contact channels,ad_match_ok,yes/no,Yes,Derived (CCPA notice + no opt-out),Paid social / display match
+Property,homeowner_renter,enum,Owner,Public record / modeled,Targeting: owners first
+Property,owner_occupied,yes/no,Yes,Public record,Exclude absentee owners for repair offers
+Property,dwelling_type,enum,Single family,Assessor,Trade fit
+Property,year_built,year,1978,Assessor,Equipment age proxy
+Property,home_age_years,number,48,Derived,Filters
+Property,living_sqft,number,"2,140",Assessor,"HVAC sizing, cleaning and painting quotes"
+Property,lot_sqft,number,"7,200",Assessor,Filters
+Property,bedrooms,number,4,Assessor,Cleaning quotes
+Property,bathrooms,number,2.5,Assessor,Plumbing and cleaning fit
+Property,stories,number,2,Assessor,"HVAC zoning, painting"
+Property,pool,yes/no,Yes,Assessor / aerial,Electrical and plumbing fit
+Property,garage,enum,Attached 2-car,Assessor,EV charger fit
+Property,heating_type,enum,Forced air gas,Assessor / modeled,HVAC fit
+Property,cooling_type,enum,Central AC,Assessor / modeled,HVAC fit
+Property,fuel_type,enum,Gas,Modeled,Appliance and water-heater fit
+Property,estimated_home_value,currency band,$1.5M–$2M,Modeled (AVM),Appliance high-end fit
+Property,assessed_value,currency,"$1,180,000",Assessor,Reference only
+Property,last_sale_date,date,2019-08-30,Deed record,Length of residence
+Property,last_sale_price,currency,"$1,050,000",Deed record (not in non-disclosure states),Reference only
+Property,length_of_residence_years,number,7,Derived,Equipment-age logic
+Property,solar_installed,yes/no,No,Permit / aerial,Electrical fit
+Property,hoa_flag,yes/no,No,Assessor,Partner channel (HOAs)
+Property,absentee_owner,yes/no,No,Assessor,Property-manager channel
+Household (modeled),head_age_band,enum,45–54,Modeled,Message tone only
+Household (modeled),household_size,number,4,Modeled,Cleaning fit
+Household (modeled),children_present,yes/no,Yes,Modeled,Message tone only
+Household (modeled),pets_present,enum,Dog,Modeled,Air duct and cleaning fit
+Household (modeled),income_band,enum,$150K–$250K,Modeled,Band only; never shown in messages
+Household (modeled),home_improvement_propensity,score 0–100,72,Modeled,Ranking
+Household (modeled),diy_propensity,score 0–100,35,Modeled,Lower DIY → higher service fit
+Household (modeled),preferred_language,enum,English,Modeled,Language of the piece
+Household (modeled),excluded_attributes,policy,Not purchased,Policy,"No race, ethnicity, religion, health, sexual orientation or political data"
+Life events,new_mover_date,date,2026-06-20,New-mover file,Welcome offer within 90 days
+Life events,new_homeowner_date,date,2026-06-12,Deed record,First-year home checklist
+Life events,pre_mover_listed_date,date,2026-09-28,Listing feed,"Pre-sale inspection, repairs, cleaning"
+Life events,listing_price_band,currency band,$1.5M–$2M,Listing feed,Tier the offer
+Life events,recent_sale_flag,yes/no,No,Deed record,Seller to new owner handover
+Life events,recent_refinance_date,date,2025-11-03,Public record,Renovation timing
+Equipment (permit / modeled),hvac_install_year,year,2011,Permit,HVAC replacement timing
+Equipment (permit / modeled),hvac_age_est_years,number,15,Derived,Replace when 15+
+Equipment (permit / modeled),water_heater_age_est_years,number,11,Permit / modeled,Plumbing offers at 10+
+Equipment (permit / modeled),roof_install_year,year,2004,Permit,Painting and gutters timing
+Equipment (permit / modeled),panel_upgrade_year,year,—,Permit,Electrical panel offers when none on file
+Equipment (permit / modeled),last_plumbing_permit_date,date,2016-02-11,Permit,Plumbing fit
+Equipment (permit / modeled),high_end_appliance_likelihood,score 0–100,81,Modeled (home value + kitchen remodel permit),Appliance HE vs LE
+Equipment (permit / modeled),kitchen_remodel_permit_date,date,2018-05-09,Permit,High-end appliance signal
+Intent signals (enhancement),permit_recent_type,enum,HVAC replacement,Permit feed (monthly),A permit filed by another contractor = competitor job; time the next service
+Intent signals (enhancement),permit_recent_date,date,2026-09-30,Permit feed,Recency for the score
+Intent signals (enhancement),permit_value,currency,"$14,500",Permit feed,Tier
+Intent signals (enhancement),listing_status,enum,Listed / pending / sold,Listing feed,Pre-mover and new-owner triggers
+Intent signals (enhancement),weather_event_type,enum,Heat wave,Weather API (ZIP),"HVAC, roofing, plumbing triggers"
+Intent signals (enhancement),weather_event_date,date,2026-10-02,Weather API,Recency
+Intent signals (enhancement),in_market_audience,enum,HVAC replacement,Ad-platform / data partner segment,Paid media only
+Intent signals (enhancement),first_party_web_visit,date + page,2026-10-15 /ac-repair,Our site pixel (consent banner),Strongest signal; respect opt-outs
+Intent signals (enhancement),ad_engagement,enum,Clicked HVAC ad,Ad platform (aggregate),Paid media sequencing
+Intent signals (enhancement),equipment_age_trigger,enum,HVAC 15+ yrs,Derived,Evergreen signal
+Intent signals (enhancement),intent_score,score 0–100,78,Model (below),Rank and pick the channel
+Intent signals (enhancement),intent_top_signal,text,HVAC permit nearby + heat wave,Model,Shown on the record
+Intent signals (enhancement),intent_last_seen,date,2026-10-15,Model,Decay
+4C match & routing,crm_match_status,enum,New / lead / customer / member,Match vs CRM,Customers and members go to 4C Retention; suppress from prospecting
+4C match & routing,last_job_date,date,—,CRM,Retention trigger if matched
+4C match & routing,ha_brand_history,text,—,CRM,Brand logic
+4C match & routing,served_zip,yes/no,Yes,Service-area table,Only served ZIPs
+4C match & routing,nearest_branch,text,San Fernando Valley,Service-area table,Capacity check
+4C match & routing,distance_mi,number,6.2,Derived,Radius filters
+4C match & routing,fit_score,score 0–100,74,Model (property + household),Rank
+4C match & routing,next_best_trade,enum,HVAC,Model,Which offer goes first
+4C match & routing,recommended_channel,enum,Direct mail + ad match,Rules engine,Never SMS without consent
+4C match & routing,suppression_reason,enum,—,Rules engine,"DNC, litigator, opt-out, customer, out of area"
+Provenance & compliance,broker_name,text,[Broker A],Contract,Audit
+Provenance & compliance,file_id / file_date,text / date,HD-2026-10-07,Broker delivery,Freshness
+Provenance & compliance,license_terms,text,"12-month, unlimited mail, no resale",Contract,Allowed uses
+Provenance & compliance,consent_basis_by_channel,text,Mail: n/a · Email: opt-in 2026-05-02 · Phone: none,Broker + rules,Channel gating
+Provenance & compliance,ccpa_notice_date,date,2026-10-08,Our privacy notice,California residents
+Provenance & compliance,opt_out_flag,yes/no,No,Our preference center / GPC,Suppress all marketing
+Provenance & compliance,drop_deletion_checked,date,2026-10-01,Broker attestation (CA DROP),Delete when the broker deletes
+Provenance & compliance,record_last_verified,date,2026-10-07,Hygiene run,Re-verify every 90 days

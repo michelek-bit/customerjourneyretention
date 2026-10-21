@@ -1,3 +1,7 @@
+# 4C Retention Ecosystem
+
+Two parts, switched at the top of the page: **4C RETENTION** (the Membership Communication Library and everything built so far) and **4C PROSPECTING** (B2C email + SMS, AI-led; see docs/PROSPECTING.md).
+
 # Q4 4C AI Solutions — Membership Communication Library
 
 A single-page web app for Home Alliance's Q4 2026 customer-communication and retention program (4C). It is one self-contained `index.html` (≈11 MB, everything inlined: data, images, audio). No build step, no server, no dependencies to install.

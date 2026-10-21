@@ -230,3 +230,57 @@ Request: reorganize Personas around a weekly email + SMS for Appliance Repair Hi
 - Offers: ARHE $1 diagnostic → $1 + 20% off labor (HE1/HE20); AR LE 25% off labor → + free diagnostic (LABOR25/LABOR25FD); HVAC 15% → 20% + free filter (HVAC15/HVAC20); PL $1 diagnostic; EL free service call; ADC free estimate; PT free minor drywall repair; CL 3rd cleaning free. Better offers and codes are proposals.
 - 11 email files in emails/personas-weekly/ (8 main + 3 follow-ups), each with a trade illustration and a member / non-member Passport block.
 - Clicking any EMAIL box now shows the week's real emails as tabs (rendered preview + subject, preheader, offer, code, timing, SMS). Transactional weeks show the matching Transactional Workflow email (V1 members, V2 non-members).
+
+## 97. Non-member: Figma email archive + Figma designs on the weekly workflow (Oct 21)
+Request: add all weekly emails from "4C all_brands_email_copy (FIGMA DESIGN)" (Google Sheet 1lEbyeEMfVi8B4vrShXWCaaNK6dY8XWySXOLeuz5abEw) to the non-member library, with the Figma designs as images, on the weekly nurture campaigns.
+- New Non-member subtab "Figma emails (737)": every trade-brand email (5 Star Appliance Repair LE/HE, HVAC Alliance Expert + HVAC Sales, Electricians Service Team, 5 Star Best Plumbing, 5 Star Air, Cleenora, Painting, cross-brand lead follow-ups), grouped by campaign week (2025 W9–W53, 2026 W2–W42), with trade filter, week filter, search, coupon codes, top banner, full copy and "Open in Figma". Membership emails (224) left for the Members tab.
+- Weekly workflow: new "Figma designs · 2026 W##" strip under the selected planner week.
+- Data in data/figma-emails.json (1.3 MB, loaded on demand to keep index.html under 16 MB).
+- Images: NOT added yet. The Figma connector is linked to michele.k@homealliance.com on a Starter team without edit access to the Home Alliance files, so screenshots/exports are refused. Cards show a copy-based preview until renders are added (data field `img`).
+
+## 98. 4C Retention Ecosystem: 4C RETENTION + 4C LEAD GENERATION (Oct 21)
+- Page renamed "4C Retention Ecosystem"; a switch above the tabs: 4C RETENTION (everything built so far) | 4C LEAD GENERATION (new, `#lead-generation`).
+- 4C Lead Generation project (B2C email + SMS, AI-led, outreach CRMs): overview funnel, lead sources & consent, 6 email/SMS sequences with phone mockups, AI agent rules, CRM stack options, compliance, 90-day plan with owners and KPIs. See docs/PROSPECTING.md.
+
+## 99. Lead Generation: sidebar navigation + pipeline board (Oct 21)
+- 4C Lead Generation sections moved into a left sidebar (same style as the channel sidebars): Overview, Pipeline, Lead sources & consent, Email & SMS sequences, AI agent, CRM stack, Compliance, 90-day plan & KPIs.
+- New Pipeline: 7 stages (New, Contacted, Qualifying, Slot offered, Booked → 4C Retention, Nurture, Closed) with stage rules/SLAs, 14 sample leads, source filter, "needs a person" filter, drag-and-drop between stages and a lead detail panel. Sample data only; the live board reads the CRM.
+
+## 100. Lead Generation: B2C Database from brokers + intent enhancement (Oct 21)
+- New sidebar item "B2C Database", structured like a prospecting platform (ZoomInfo-style): Search with filter panel, results table, household profile, bulk actions; Lists; Intent signals; Field dictionary (103 custom fields in 9 groups); Broker purchase workflow and channel rules. 20 fictional sample households. See docs/PROSPECTING.md.
+
+## 101. In-house Figma Email tab (Oct 21)
+Request: replicate the Figma page Email-Templates-HA (file vY5zKmQDZBBI8H9AXKgNqC, Page 1) with everything on it in a new tab.
+- New 4C RETENTION tab "In-house Figma Email" (`#inhouse-figma`): Canvas view (all 619 top-level frames at their Figma positions; drag, wheel/± zoom, fit; labels; search highlight), Grid view (cards in canvas order with mini layouts), and a frame panel (layout + copy rebuilt from the file structure, real Figma render where available, brand, coupon codes, size, position, all copy top to bottom, Open in Figma).
+- Data: data/inhouse-figma.json (619 frames, ~33K elements: text with full copy, image boxes, backgrounds, lines) + data/inhouse-figma/*.jpg (12 real renders).
+- Limit: Figma's Starter plan MCP cap stopped the renders after 12 frames; colors/images for the rest need a Dev/Full seat on Home Alliance's paid plan. Re-running the download script fills them in with no page changes (files named by node id).
+
+## 102. Renamed 4C Lead Generation → 4C Prospecting (Oct 21)
+- Switch, section title, sidebar heading and docs now say 4C PROSPECTING; deep link `#prospecting` (old `#lead-generation` still opens it). Doc moved to docs/PROSPECTING.md.
+
+## 103. In-house Figma Email moved to a Non-Member subtab (Oct 21)
+- Removed from the main tab bar; now Non-Member → "In-house Figma Email" (after Figma emails). `#inhouse-figma` opens it directly. Non-Member subtabs scroll sideways on phones.
+
+## 104. AI-OFFICE tab, game mode (Oct 21)
+Request: a videogame-style AI-OFFICE tab (reference: Infuser Skilltree map) with an AI agent for every team member.
+- New tab AI-OFFICE (`#ai-office`) with MAP | DASHBOARD | LIST and skill search.
+- MAP: office tower (one lit floor per agent), particle background, 4C CORE orb, and a pannable/zoomable skill tree. Agents: COMMANDER (MK, Head of AI Customer Lifecycle), ARCHITECT (Victor, AI Product Manager), MAESTRO (Diego, AI-First Omnichannel Manager), SCOUT (Nazar, AI-driven Database Sourcing Manager), FRONT DESK (shared customer-facing agents). 33 skills marked Live / Building / Locked; agent card with level, XP, stats, skill details and scripted "Talk to" replies.
+- DASHBOARD: agent cards, quest board from the 90-day plan (checkboxes add XP, saved per browser), leaderboard, achievements. LIST: every skill with owner, status, inputs and outputs.
+
+## 105. AI-OFFICE: office building view (Oct 21)
+- New default view OFFICE (before MAP): a 5-floor office building with the "4C · AI-OFFICE" roof sign, beacon, side elevator, and one themed floor per agent: Penthouse 5F COMMANDER (KPI wall), Lab 4F ARCHITECT (whiteboard), Studio 3F MAESTRO (screens), Data Center 2F SCOUT (server racks), Lobby 1F FRONT DESK (reception). Each skill is a workstation: bot working at a lit monitor (live), blinking monitor (building) or empty locked desk. Click a floor or desk to open its card.
+
+## 106. AI-OFFICE: high-tech tower, floor blueprints, team interactions (Oct 21)
+- OFFICE view rebuilt in three panels: (1) a tapered glass tower with spire, beacon, halo rings, an orbiting drone, flowing data streams and a core spine; data packets travel between floors when agents hand work to each other; (2) an architectural blueprint of the selected floor (grid paper, walls, core/lift, stairs, the team member's office, a huddle table for humans + agents, one workstation per skill with live/building/locked status, dimension lines, title block, north arrow), with bots walking between desks and the huddle and the team member walking to the huddle; (3) a Team activity feed and on-floor speech bubbles cycling through sample hand-offs (MK approves, SCOUT delivers a list to MAESTRO, FRONT DESK escalates a gas smell, etc.).
+- Tab bar: tighter padding; tab subtitles hidden under 1600 px so AI-OFFICE stays visible.
+
+## 107. AI-OFFICE more human (Oct 21)
+- Robot icons replaced by illustrated people (face, hair, outfit in the agent's color, small glowing earpiece marking them as AI): Ava · COMMANDER (with MK), Leo · ARCHITECT (with Victor), Mia · MAESTRO (with Diego), Sam · SCOUT (with Nazar), Joy · FRONT DESK (with the CSR team). Used on the map, tower floors, agent cards, dashboard, and the activity feed.
+- Blueprints: agents seated at live desks and walking as top-down people, the team member walking to the huddle with their name, plus a café, lounge and plants on every floor.
+
+## 108. AI-OFFICE located in Century City, Los Angeles (Oct 21)
+- Tower now stands in an LA sunset scene: purple-to-orange sky, setting sun, Hollywood Hills / Santa Monica Mountains silhouette, a lit skyline with the Century City twin triangular towers, palm trees, and an "Avenue of the Stars" street sign; "CENTURY CITY · Los Angeles, CA" with a live Pacific-time clock under the tower.
+- Header says CENTURY CITY · LOS ANGELES; blueprints note "Century City, LA", windows facing the Hollywood Hills, and the location in the title block.
+
+## 109. AI-OFFICE always visible (Oct 21)
+- On laptop widths (1280–1440 px) the AI-OFFICE tab was pushed off the right edge of the tab bar. The tab bar now wraps onto a second row on desktop, and AI-OFFICE also has its own button in the top switch (4C RETENTION | 4C PROSPECTING | AI-OFFICE). Direct link: #ai-office.
