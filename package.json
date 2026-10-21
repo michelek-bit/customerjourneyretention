@@ -1,0 +1,6 @@
+{
+  "name": "q4-4c-ai-solutions",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=18" }
+}

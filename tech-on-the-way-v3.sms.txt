@@ -1,0 +1,26 @@
+TECH ON THE WAY — SMS (Customer.io, Job On My Way workflow)
+
+SMS 1 · transactional · send to everyone at job_on_my_way
+{{snippets.brand}}: {{snippets.tech_name}} is on the way, arriving {{snippets.eta_window}}. {{snippets.tech_repairs}} repairs, {{snippets.tech_reviews}} 5-star reviews. Track: {{snippets.tracking_url}}
+
+Sample (134 characters, 1 segment):
+Electricians Service Team: Razmik is on the way, arriving 10:40-11:00 AM. 1,657 repairs, 1,600+ 5-star reviews. Track: est.link/t/7Kq2
+
+SMS 2 · coupon · only contacts with SMS marketing consent · 1 minute after SMS 1 · respect quiet hours
+While {{snippets.tech_name}} is there: {{snippets.upsell_short}}, today only. Show code {{snippets.upsell_code}}. Reply STOP to opt out
+
+Sample (105 characters, 1 segment):
+While Razmik is there: Electrical Safety Check $199, today only. Show code SAFE199. Reply STOP to opt out
+
+SMS 2 · Passport members (send instead of the SMS 2 above when customer.passport_member is true)
+While {{snippets.tech_name}} is there: {{snippets.upsell_short}}, today only. Code {{snippets.upsell_code}}. More member offers: {{snippets.passport_url}} Reply STOP to opt out
+
+Sample (136 characters, 1 segment):
+While Razmik is there: Electrical Safety Check $199, today only. Code SAFE199. More member offers: est.link/p/4Rm9 Reply STOP to opt out
+
+Notes
+- Passport: map customer.passport_member to the real member attribute; passport_url = deep link to the member offers page (with UTM). Non-members get the standard SMS 2 and no Passport card in the email.
+- Keep both in plain GSM-7 characters: hyphen (not en dash) in the time window, no star symbols or emoji, or each SMS splits into 70-character segments.
+- Shorten the tracking link (branded short domain) so SMS 1 stays under 160 characters.
+- Coupon codes per trade (samples, confirm with ops): Electrical SAFE199 ($199 Electrical Safety Check) · Appliance 2nd appliance check $30 · Plumbing $99 hot water flush · HVAC free service call with repair.
+- Not legal advice: confirm SMS consent rules (TCPA) with counsel.
