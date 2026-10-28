@@ -366,3 +366,37 @@ Request: "after SMS create a list for outbound follow up. create as a pipeline t
 - "Run automation" plays 12 days for 16 fictional customers; KPIs (booked, revenue at $479, booked by channel, automated actions vs human calls) and an automation log update live.
 - A pipeline strip sits on top of every channel tool, highlighting where that tool sits in the flow.
 - SMS › **Outbound follow-up list**: everyone the SMS did not convert, ranked by a 0–100 priority score, as a call pipeline (Call queue → Attempt 1 → Attempt 2 → Callback → Booked / Not interested / Retargeting / DNC). Outcome buttons move cards automatically (voicemail → auto-text with consent; 3 attempts → retargeting; DNC → suppressed everywhere); drag and drop; "Call next"; Script › opens the Outbound Script prefilled; CSV export.
+
+## 123. Live Coach for every channel (SMART TOOLS)
+Request: "add Live Coach: every channel (email, SMS, push, in-app, AI chat, AI voice, ads or mail) to AI TOOLS"
+- SMART TOOLS › **Live Coach** (second item, under Pipeline) with 8 channels: AI voice, AI chat, SMS, Email, Push, In-app, Ads, Direct mail.
+- Conversation channels (AI voice, AI chat, SMS): live transcript; each turn the coach shows detected intent, a sentiment meter, objections, the next best action, 3 suggested replies (tap to send; SMS shows characters/segments), compliance checks, customer context and live guardrails (safety words, STOP, human takeover).
+- Broadcast channels (Email, Push, In-app, Ads, Direct mail): the draft is scored as you type (0–100 with fixes), then Launch plays simulated live results (opens/clicks/bookings, CTR, frequency, QR scans) with coach recommendations (A/B switch, resend to non-openers, refresh creative at frequency > 3, match-back for mail).
+- Page size: moved the 1.76 MB Smart Calling audio to data/sc-aud.json (loaded on demand); index.html back to 14.3 MB.
+
+## 124. SMART TOOLS and AI-ADVISORS moved to AI-OFFICE
+Request: "place the SMARTTOOLS and AI-ADVISORS to AI OFFICE tab, and remove from 4C RETENTION"
+- Removed both tabs from the 4C RETENTION tab bar.
+- AI-OFFICE now has its own section bar: AI-OFFICE (the game) · SMART TOOLS · AI-ADVISORS. #smart-tools and #ai-advisors open inside AI-OFFICE.
+- START HERE finder rows, map and SOP step 2 updated to "AI-OFFICE › …".
+
+## 125. SELF-MANAGE + AI-OFFICE project renamed AI-FIRST
+Request: "add another tab on AI-OFFICE called SELF-MANAGE create an end to end lead generation and customer retention self-managed process. Change the name of tab from AI-OFFICE to AI-FIRST"
+- Top project button renamed **AI-FIRST** (sections: AI-OFFICE game · SMART TOOLS · AI-ADVISORS · SELF-MANAGE). START HERE texts and finder breadcrumbs updated; #ai-first and #self-manage links.
+- SELF-MANAGE: a closed loop of 12 stages (Source → Capture & respond → Qualify & book → Dispatch → First job → Upsell & cross-book → Onboard & review → Maintain (PM) → Membership → Nurture → Win-back → Refer & lookalike → back to Source), each with an AI agent, KPI, target, status and smart channels.
+- "Run a week" simulates 10 sense → decide → act decisions (budget shift Meta→LSA, missed-call text-back, geo pause on full capacity, SMS frequency cut, PM campaign, upsell A/B, review ask, member offer, mail drop for non-openers, promoter lookalike), each checked against editable guardrails (budget cap, CPA, ROAS, opt-out, frequency, CSAT, max discount).
+- Autonomy levels 0–4, approval queue (approve/reject), decision log, auto-written weekly self-report and a kill switch. Sample week; numbers simulated.
+
+## 126. SELF-MANAGE › SMART DASHBOARD (metrics, P&L, projections)
+Request: "on self manage add a tab called SMART DASHBOARD, add main metrics updated daily, weekly and monthly. Add also P&L metrics and projections dashboard"
+- SELF-MANAGE now has two views: Self-managed loop · **SMART DASHBOARD** (#smart-dashboard).
+- Daily / Weekly / Monthly toggle (30 days, 13 weeks, 12 months; refresh daily 6 AM PT, Mondays, the 1st): 8 KPI tiles with change vs prior period and sparklines (revenue, bookings, leads, cost per booking, ROAS, lead→booked, 90-day repeat, SMS opt-out), revenue bar chart and leads-vs-bookings lines with hover tooltips, channel table, funnel.
+- P&L for the period vs prior: job revenue, Passport, COGS, gross profit, marketing, contribution, tools, staff, operating profit, % of revenue; unit economics.
+- Projections: Conservative / Base / Aggressive with editable assumptions (lead growth, booking-rate change, revenue per booking, cost per lead change, gross margin) → 12-month revenue, operating profit, bookings, spend/ROAS, chart (6 months actual + 12 projected, dashed) and table.
+- Simulated data anchored to the 4C Calculator Q4 plan (~$527K/month, $598 per booking, ~10× ROAS); assumptions labeled.
+
+## 127. AI GANTT + AI agents at the bottom of every page
+Request: "create an AI gantt chart tab with all the activities, create an AI-Agent per position, have them executing the tasks and checking in, show inputs and outputs. Make each on a small figure on the bottom page and when needed to interact via prompt, show notification"
+- AI-FIRST › **AI GANTT** (#ai-gantt): 26 Q4 activities (Oct 5 → Jan 3, 13 weeks) grouped by 6 positions, each run by its AI agent: Ava · COMMANDER (MK), Leo · ARCHITECT (Victor), Mia · MAESTRO (Diego), Sam · SCOUT (Nazar), Joy · FRONT DESK (CSR team), Max · DISPATCH (Dispatch team). Bars show progress and status (in progress, done, needs input, waiting on a dependency, not started) with a Today line.
+- Task detail: inputs, outputs, dependencies, your answers and the agent's check-ins. Run agents / +1 day / Back to today; agents check in every simulated morning.
+- Bottom dock on every page: a small figure per agent with live status; click for the current task, inputs/outputs, recent check-ins and an "Ask" box. When an agent hits a decision point it raises a notification toast and a badge; answer by prompt and the agent resumes (answers kept in this browser).
