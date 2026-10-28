@@ -1,0 +1,665 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Cleenora Workflow Simulator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: workflow rail | GHL builder canvas with day timeline | what Maria receives + contact record */
+:root{
+  --brand:#0b8f8a;--brand-deep:#0a5f63;--brand-soft:#dcf1ee;--sun:#e8a317;--sun-soft:#fbefd2;--ink:#10283a;
+  --bg:#f3f7f6;--paper:#ffffff;--fg:#10283a;--muted:#5a6d79;--line:#d9e3e2;--canvas:#eef3f2;--dot:#cfdcda;
+  --trig:#e8a317;--trig-soft:#fbefd2;--act:#0b8f8a;--wait:#7b8b95;--cond:#3c5a73;--goal:#0a5f63;--team:#6a5acd;--team-soft:#ecebfa;
+  --sms-in:#e7edf0;--sms-out:#0b8f8a;--sms-out-fg:#ffffff;--ph:#fbefd2;--ph-fg:#7a5200;
+  --display:"Outfit",ui-sans-serif,system-ui,sans-serif;--body:"Figtree",ui-sans-serif,system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --brand:#2bb8b1;--brand-deep:#7fd8d2;--brand-soft:#123a3b;--sun:#f0b43a;--sun-soft:#3a2e12;--ink:#e6f0ef;
+  --bg:#0c1a22;--paper:#12242e;--fg:#e6f0ef;--muted:#93a6b0;--line:#24404b;--canvas:#0f2029;--dot:#1f3640;
+  --trig:#f0b43a;--trig-soft:#3a2e12;--act:#2bb8b1;--wait:#8d9ca5;--cond:#8fb3cf;--goal:#7fd8d2;--team:#a99cf0;--team-soft:#26224a;
+  --sms-in:#1c3440;--sms-out:#1f8f8a;--sms-out-fg:#ffffff;--ph:#3a2e12;--ph-fg:#f6cf7a;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --brand:#2bb8b1;--brand-deep:#7fd8d2;--brand-soft:#123a3b;--sun:#f0b43a;--sun-soft:#3a2e12;--ink:#e6f0ef;
+  --bg:#0c1a22;--paper:#12242e;--fg:#e6f0ef;--muted:#93a6b0;--line:#24404b;--canvas:#0f2029;--dot:#1f3640;
+  --trig:#f0b43a;--trig-soft:#3a2e12;--act:#2bb8b1;--wait:#8d9ca5;--cond:#8fb3cf;--goal:#7fd8d2;--team:#a99cf0;--team-soft:#26224a;
+  --sms-in:#1c3440;--sms-out:#1f8f8a;--sms-out-fg:#ffffff;--ph:#3a2e12;--ph-fg:#f6cf7a;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--body);margin:0}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{padding-block:16px 12px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);background:var(--paper)}
+.brandmark{display:flex;align-items:center;gap:10px}
+.brandmark .logo{width:34px;height:34px;border-radius:10px;background:var(--brand);display:grid;place-items:center;color:#fff;font:800 18px var(--display)}
+.brandmark h1{font-size:22px}
+.brandmark p{margin:0;color:var(--muted);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;font:500 11px var(--mono);color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:9px;height:9px;border-radius:3px;display:inline-block}
+.app{display:grid;grid-template-columns:230px minmax(0,1fr) 380px;gap:16px;padding-block:16px;align-items:start}
+/* rail */
+.rail{display:flex;flex-direction:column;gap:6px;position:sticky;top:12px;min-width:0}
+.rail .lbl{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:2px 4px}
+.wfbtn{display:grid;grid-template-columns:46px 1fr;gap:2px 8px;text-align:left;padding:9px 10px;border-radius:12px;border:1px solid transparent;background:transparent;cursor:pointer;align-items:center}
+.wfbtn:hover{background:var(--paper);border-color:var(--line)}
+.wfbtn.on{background:var(--paper);border-color:var(--brand);box-shadow:0 1px 0 var(--line)}
+.wfbtn .id{font:500 12px var(--mono);color:var(--brand-deep);grid-row:span 2}
+.wfbtn .nm{font:600 14px/1.25 var(--display)}
+.wfbtn .sp{font-size:11.5px;color:var(--muted)}
+/* center */
+.center{display:flex;flex-direction:column;gap:12px;min-width:0}
+.wfhead{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.wfhead .row1{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;justify-content:space-between}
+.wfhead h2{font-size:24px}
+.pill{display:inline-flex;align-items:center;gap:6px;font:500 11.5px var(--mono);padding:3px 9px;border-radius:99px;white-space:normal;max-width:100%}
+.pill.s1{background:var(--brand-soft);color:var(--brand-deep)}
+.pill.s2{background:var(--brand);color:#fff}
+.pill.s3{background:var(--ink);color:var(--paper)}
+.pill.s4{background:var(--sun-soft);color:var(--ph-fg);border:1px dashed var(--sun)}
+.meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.meta div{min-width:0}
+.meta .k{font:500 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.meta .v{font-size:13.5px}
+.banner{font-size:13px;background:var(--sun-soft);color:var(--fg);border-radius:10px;padding:8px 12px;border:1px dashed var(--sun)}
+.scen{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.scen .k{font:500 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.chip{border:1px solid var(--line);background:var(--paper);border-radius:99px;padding:5px 12px;font-size:13px;cursor:pointer}
+.chip:hover{border-color:var(--brand)}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.controls .btns{display:flex;gap:6px}
+.cbtn{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 12px;font:600 13px var(--display);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.cbtn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.cbtn:disabled{opacity:.4;cursor:default}
+.clock{font:500 13px var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.clock b{color:var(--fg);font-weight:500}
+.progress{height:4px;border-radius:4px;background:var(--line);overflow:hidden;flex-basis:100%}
+.progress i{display:block;height:100%;background:var(--brand);transition:width .25s}
+/* canvas */
+.canvas{background:var(--canvas);background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:16px 16px;border:1px solid var(--line);border-radius:16px;padding:20px 16px 24px;display:flex;flex-direction:column;align-items:center}
+.canvas .cap{align-self:stretch;display:flex;justify-content:space-between;font:500 11px var(--mono);color:var(--muted);margin-bottom:12px;gap:8px;flex-wrap:wrap}
+.node{width:min(460px,100%);background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:12px;padding:9px 12px;display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:center;cursor:pointer;text-align:left;transition:opacity .2s,transform .2s,box-shadow .2s}
+.node .ty{font:500 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--c);grid-column:2}
+.node .ic{grid-row:span 2;width:28px;height:28px;border-radius:8px;background:var(--c);color:var(--paper);display:grid;place-items:center;font:700 13px var(--mono)}
+.node .tt{grid-column:2;font:600 14px/1.3 var(--display)}
+.node .dd{grid-row:1/span 2;grid-column:3;font:500 11px var(--mono);color:var(--muted);text-align:right;white-space:nowrap}
+.node.future{opacity:.42}
+.node.cur{box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 35%,transparent),0 6px 18px -8px rgba(0,0,0,.25);transform:scale(1.015)}
+.node.done .ic::after{content:""}
+.node.inb{--c:var(--muted)}
+.edge{width:2px;height:16px;background:var(--line)}
+.edge.done{background:var(--brand)}
+.k-trig{--c:var(--trig)}.k-act{--c:var(--act)}.k-msg{--c:var(--brand-deep)}.k-wait{--c:var(--wait)}.k-cond{--c:var(--cond)}.k-goal{--c:var(--goal)}.k-split{--c:var(--cond)}.k-team{--c:var(--team)}.k-inb{--c:var(--sun)}
+.explain{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.explain .k{font:500 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--brand)}
+.explain p{margin:0;font-size:14px;max-width:70ch}
+.guards{display:flex;flex-wrap:wrap;gap:6px}
+.guard{font:500 11px var(--mono);padding:3px 8px;border-radius:99px;background:var(--brand-soft);color:var(--brand-deep)}
+/* right */
+.right{display:flex;flex-direction:column;gap:12px;min-width:0;position:sticky;top:12px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.panel>.ph{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);gap:8px}
+.panel>.ph h3{font-size:14px}
+.panel>.ph span{font:500 11px var(--mono);color:var(--muted)}
+.feed{padding:14px;display:flex;flex-direction:column;gap:10px;max-height:56vh;overflow:auto;background:var(--bg)}
+.empty{color:var(--muted);font-size:13px;text-align:center;padding:24px 8px}
+.bub{max-width:88%;padding:9px 12px;border-radius:16px;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.bub.out{align-self:flex-start;background:var(--sms-out);color:var(--sms-out-fg);border-bottom-left-radius:4px}
+.bub.in{align-self:flex-end;background:var(--sms-in);color:var(--fg);border-bottom-right-radius:4px}
+.bub .from{display:block;font:500 10.5px var(--mono);opacity:.75;margin-bottom:2px}
+.mail{background:var(--paper);border:1px solid var(--line);border-radius:12px;font-size:13.5px;overflow:hidden}
+.mail .mh{padding:9px 12px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:1px}
+.mail .mh .f{font:500 10.5px var(--mono);color:var(--muted)}
+.mail .mh .s{font:600 14px/1.3 var(--display)}
+.mail .mh .pv{color:var(--muted);font-size:12.5px}
+.mail .mb{padding:10px 12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.cta{display:inline-block;background:var(--brand);color:#fff;border-radius:8px;padding:4px 12px;margin:6px 0;font:600 13px var(--display);white-space:normal}
+.mail .mb .cta{display:block;width:max-content;max-width:100%}
+.script,.slack,.note,.ad{border-radius:12px;font-size:13.5px;padding:10px 12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.script{background:var(--team-soft);border:1px solid var(--line)}
+.slack{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--team)}
+.script .h,.slack .h,.ad .h{display:block;font:500 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--team);margin-bottom:4px;white-space:normal}
+.note{background:transparent;border:1px dashed var(--line);color:var(--muted);font-size:12.5px}
+.ad{background:var(--paper);border:1px solid var(--line);padding:0;overflow:hidden}
+.ad .h{color:var(--muted);padding:8px 12px 0}
+.ad .img{height:90px;margin:8px 12px;border-radius:8px;background:linear-gradient(135deg,var(--brand-soft),var(--sun-soft));display:grid;place-items:center;font:700 15px var(--display);color:var(--brand-deep);text-align:center;padding:8px}
+.ad .t{padding:0 12px 4px;font:600 15px var(--display)}
+.ad .d{padding:0 12px 10px;color:var(--muted);font-size:13px}
+.ad .row{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding:8px 12px;font-size:12px;color:var(--muted)}
+.ad .row b{background:var(--bg);border:1px solid var(--line);color:var(--fg);padding:3px 10px;border-radius:6px;font:600 12px var(--display)}
+.mf{background:color-mix(in srgb,var(--brand) 18%,transparent);border-radius:4px;padding:0 3px;box-shadow:inset 0 -1px 0 var(--brand)}
+.bub.out .mf{background:rgba(255,255,255,.22);box-shadow:inset 0 -1px 0 rgba(255,255,255,.7)}
+.phd{background:var(--ph);color:var(--ph-fg);border-radius:4px;padding:0 4px;font-weight:600;border:1px dashed var(--sun)}
+table.kw{border-collapse:collapse;width:100%;font-size:13px}
+table.kw td{border-top:1px solid var(--line);padding:6px 4px;vertical-align:top}
+table.kw td:first-child{font:600 12px var(--mono);color:var(--brand-deep);white-space:nowrap;padding-right:10px}
+.rec{padding:12px 14px;display:flex;flex-direction:column;gap:10px;font-size:13px}
+.rec .who{display:flex;gap:10px;align-items:center}
+.rec .av{width:34px;height:34px;border-radius:50%;background:var(--sun-soft);color:var(--ph-fg);display:grid;place-items:center;font:700 14px var(--display);flex:none}
+.rec .who b{font:600 15px var(--display);display:block}
+.rec .who small{color:var(--muted)}
+.rec .grp .k{font:500 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font:500 11.5px var(--mono);padding:2px 7px;border-radius:6px;background:var(--bg);border:1px solid var(--line)}
+.tag.aud{background:var(--trig-soft);border-color:transparent}
+.tag.new{border-color:var(--brand);background:var(--brand-soft);color:var(--brand-deep);animation:pop .5s}
+.tag.gone{text-decoration:line-through;opacity:.55}
+.fields{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:12.5px}
+.fields dt{font-family:var(--mono);color:var(--muted)}
+.fields dd{margin:0;overflow-wrap:anywhere}
+.fields dd.new{color:var(--brand-deep);font-weight:600}
+.stage{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.stage b{font:600 13.5px var(--display)}
+@keyframes pop{from{transform:scale(.85);opacity:.3}to{transform:none;opacity:1}}
+footer.src{padding-block:4px 28px;color:var(--muted);font-size:12.5px;display:flex;flex-direction:column;gap:6px}
+footer.src .links{display:flex;flex-wrap:wrap;gap:6px 14px}
+footer.src a{color:var(--brand-deep)}
+@media (max-width:1180px){
+  .app{grid-template-columns:minmax(0,1fr) 360px}
+  .rail{grid-column:1/-1;position:static;flex-direction:row;overflow-x:auto;padding-bottom:4px}
+  .rail .lbl{display:none}
+  .wfbtn{flex:none;width:auto;grid-template-columns:auto;padding:7px 12px}
+  .wfbtn .id{grid-row:auto}.wfbtn .sp{display:none}
+}
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .right{position:static}
+  .meta{grid-template-columns:1fr}
+  .feed{max-height:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top wrap">
+  <div class="brandmark"><div class="logo" aria-hidden="true">C</div><div><h1>Cleenora Workflow Simulator</h1><p>Each improved workflow, step by step, as GoHighLevel would run it. Copy is the approved library; the contact is a sample.</p></div></div>
+  <div class="legend" aria-label="Node types">
+    <span><i style="background:var(--trig)"></i>Trigger</span><span><i style="background:var(--brand-deep)"></i>Message</span><span><i style="background:var(--act)"></i>Action</span><span><i style="background:var(--wait)"></i>Wait</span><span><i style="background:var(--cond)"></i>If / Else · Split</span><span><i style="background:var(--goal)"></i>Goal</span><span><i style="background:var(--team)"></i>Team</span><span><i style="background:var(--sun)"></i>Reply</span>
+  </div>
+</header>
+
+<main class="app wrap">
+  <nav class="rail" id="rail" aria-label="Workflows"><div class="lbl">Workflows</div></nav>
+  <section class="center">
+    <div class="wfhead" id="wfhead"></div>
+    <div class="controls">
+      <div class="btns">
+        <button class="cbtn" id="bReset" title="Restart scenario">↺ Reset</button>
+        <button class="cbtn" id="bPrev">← Prev</button>
+        <button class="cbtn primary" id="bPlay">▶ Play</button>
+        <button class="cbtn" id="bNext">Next →</button>
+      </div>
+      <div class="clock" id="clock"></div>
+      <div class="progress"><i id="prog"></i></div>
+    </div>
+    <div class="canvas" id="canvas" aria-label="Workflow builder"></div>
+    <div class="explain" id="explain"></div>
+  </section>
+  <aside class="right">
+    <div class="panel"><div class="ph"><h3 id="feedTitle">What the contact receives</h3><span id="feedCount"></span></div><div class="feed" id="feed"></div></div>
+    <div class="panel"><div class="ph"><h3>Contact record in GHL</h3><span>live</span></div><div class="rec" id="rec"></div></div>
+  </aside>
+</main>
+
+<footer class="src wrap">
+  <div>Node names follow GHL's own trigger and action names. <span class="mf">Highlighted</span> text is a merge field filled for the sample contact. <span class="phd">[$X]</span> marks a value Dai sets before launch. Sample contacts and dates are illustrative.</div>
+  <div class="links">
+    <a href="https://help.gohighlevel.com/support/solutions/articles/155000002292-a-list-of-workflow-triggers" target="_blank" rel="noopener">GHL: workflow triggers</a>
+    <a href="https://help.gohighlevel.com/support/solutions/articles/155000003328" target="_blank" rel="noopener">GHL: Goal Event</a>
+    <a href="https://help.gohighlevel.com/support/solutions/articles/155000003304-workflow-action-split" target="_blank" rel="noopener">GHL: Split action</a>
+    <a href="https://help.gohighlevel.com/support/solutions/articles/155000003236-create-custom-audiences-in-ad-manager" target="_blank" rel="noopener">GHL: custom audiences</a>
+    <a href="https://help.gohighlevel.com/support/solutions/articles/155000008109-opportunities-widgets-in-dashboards-reports" target="_blank" rel="noopener">GHL: opportunity widgets</a>
+    <a href="https://help.gohighlevel.com/support/solutions/articles/155000002544-user-roles-permissions-and-assigned-data-subaccount" target="_blank" rel="noopener">GHL: roles and permissions</a>
+  </div>
+</footer>
+
+<script>
+const COPY={"WF-01": [{"title": "Q0 · Quote confirmation · SMS · under 1 minute", "segs": [["q", "Hi {{contact.first_name}}, it's {{location.name}}. Your cleaning quote is ready: {{contact.quote_link}} Pick a date there to book, or reply with any question. Reply STOP to opt out."]]}, {"title": "Q0 · Quote email · instant", "segs": [["p", "Subject: Your {{location.name}} cleaning quote · Preview: Three options, one tap to book."], ["q", "Hi {{contact.first_name}},\n\nThanks for asking us to quote your home. Here are your options:\n• Standard clean – kitchen, bathrooms, floors, dusting\n• Standard + kitchen bundle – adds inside the oven and fridge\n• Deep clean – baseboards, cabinets, vents and built-up grimeBooking a weekly, biweekly or monthly plan saves you 20%, 15% or 10% on every visit.\n\n[Book my clean]\n\nNot happy with a clean? We come back within 24 hours and fix it.\n\n{{location.name}} · {{location.phone}}"]]}, {"title": "Q1 · Proof · SMS + email · day 1", "segs": [["p", "SMS"], ["q", "Hi {{contact.first_name}}, still thinking it over? Our customers rate us 5 stars, and if anything's missed we re-clean within 24 hours. Book here: {{contact.quote_link}}"], ["p", "Email · Subject: What happens if a spot gets missed? · Preview: Our 24-hour reclean guarantee."], ["q", "Hi {{contact.first_name}},\n\nChoosing a cleaner means letting people into your home, so here's how we make it easy:\n• The same vetted, friendly team on every visit\n• Your checklist, done the way you want it\n• Missed something? We come back within 24 hours at no cost[See my quote and book]\n\n{{user.name}}, {{location.name}}"]]}, {"title": "Q2 · 48-hour perk · SMS + email · day 4", "segs": [["p", "SMS"], ["q", "{{contact.first_name}}, book your clean in the next 48 hours and we'll add [ADD-ON] for free. Grab a date: {{contact.quote_link}}"], ["p", "Email · Subject: A free [ADD-ON] with your first clean · Preview: Book in the next 48 hours."], ["q", "Hi {{contact.first_name}},\n\nBook your clean by the end of {{custom_values.offer_deadline}} and we'll include [ADD-ON] at no extra charge. It's usually the job nobody wants to do.\n\n[Claim my free add-on]\n\n{{location.name}} · {{location.phone}}"]]}, {"title": "Q3 · Last call · SMS + email · day 11", "segs": [["p", "SMS"], ["q", "Last note from {{location.name}}, {{contact.first_name}}: take [$X] off your first clean if you book this week. {{contact.quote_link}} Reply LATER and we'll check back next month."], ["p", "Email · Subject: [$X] off, then we'll stop asking · Preview: Your quote is still saved."], ["q", "Hi {{contact.first_name}},\n\nWe don't want to crowd your inbox, so this is our last reminder. Your quote is saved, and if you book this week we'll take [$X] off your first clean.\n\n[Book with [$X] off]\n\nNot the right time? Just reply \"later\" and we'll check in when it suits you.\n\n{{location.name}}"]]}, {"title": "Reply LATER · SMS · instant (new)", "segs": [["q", "No problem, {{contact.first_name}}. Your quote stays saved and we'll check in next month. If anything changes, just reply here."], ["p", "Positive and negative replies post the O3 owner alert; the text is on the WF-10 tab."]]}], "WF-02": [{"title": "C1 · Request received · email · instant", "segs": [["p", "Subject: Your cleaning quote for {{contact.company_name}} · Preview: A 20-minute walkthrough gets you an exact price."], ["q", "Hi {{contact.first_name}},\n\nThanks for reaching out about cleaning for {{contact.company_name}}. Every commercial space is different, so we start with a short walkthrough. It takes about 20 minutes, and you get a written proposal with an exact scope and price within 24 hours.\n\n[Pick a walkthrough time]\n\nPrefer to talk first? Reply here or call me at {{location.phone}}.\n\n{{user.name}}, {{location.name}} Commercial"], ["p", "SMS (opted-in only)"], ["q", "Hi {{contact.first_name}}, it's {{user.name}} from {{location.name}}. Got your request for {{contact.company_name}}. When works for a 20-minute walkthrough? Reply STOP to opt out."]]}, {"title": "O1-B2B · First call script · within 2 business hours", "segs": [["q", "Hi {{contact.first_name}}, it's [NAME] from {{location.name}}. You asked about cleaning for {{contact.company_name}}. To give you an exact price, I'd like to see the space for about 20 minutes. Does [DAY] morning or afternoon work better? And who else should be there?"]]}, {"title": "C2 · Why businesses choose us · email · day 2", "segs": [["p", "Subject: What changes when you switch cleaners · Preview: The same crew, after-hours access, fully insured."], ["q", "Hi {{contact.first_name}},\n\nMost managers who call us are tired of chasing a cleaner. Here's what you get instead:\n• The same trained crew every visit, so nothing needs re-explaining\n• After-hours or weekend cleaning, with secure key or alarm handling\n• Fully insured, with a checklist signed off after each visit\n• One contact person who answers the same day[Book the walkthrough]\n\nHappy to share references from local businesses on request. [ADD REAL CLIENT REFERENCES ONLY]\n\n{{user.name}}"]]}, {"title": "C3 · Second nudge · email · day 5, no walkthrough", "segs": [["p", "Subject: Quick question about {{contact.company_name}} · Preview: Is cleaning still on your list this month?"], ["q", "Hi {{contact.first_name}},\n\nI tried you by phone today. Is a new cleaning contract still on your list this month, or should I check back later? A walkthrough takes 20 minutes and there's no commitment.\n\n[Pick a time]\n\n{{user.name}}"]]}, {"title": "C4 · Second decision-maker · email · day 10, no walkthrough", "segs": [["p", "Subject: Who else should see this? · Preview: Happy to send the details to your team."], ["q", "Hi {{contact.first_name}},\n\nCleaning decisions often involve facilities, the owner or finance. If it helps, reply with who else should see this and I'll send them a one-page summary of how we work and what a visit includes.\n\n{{user.name}}"]]}, {"title": "C5 · B2B nurture · email · day 30, then monthly for 90 days", "segs": [["p", "Subject: A cleaner office without the follow-up · Preview: When your current contract comes up, we're here."], ["q", "Hi {{contact.first_name}},\n\nIf your current cleaning contract is up for renewal soon, we'd like to quote it. One walkthrough, one written proposal, and a start date that fits your notice period.\n\n[Book a walkthrough]\n\n{{user.name}}"], ["p", "Rotate the second paragraph monthly: after-hours access, consistent crew, add-on scope (windows, carpets, floors)."]]}, {"title": "C6 · Walkthrough confirmed · email + SMS · when booked", "segs": [["p", "Email · Subject: Confirmed: walkthrough on {{appointment.date}} · Preview: About 20 minutes; bring anyone who decides."], ["q", "Hi {{contact.first_name}},\n\nYour walkthrough is booked for {{appointment.date}} at {{appointment.time_window}}. I'll take about 20 minutes to see the space and note any special needs. Your written proposal follows within 24 hours.\n\nIf anyone else signs off on cleaning, please invite them.\n\n{{user.name}} · {{location.phone}}"], ["p", "SMS"], ["q", "Confirmed: {{user.name}} from {{location.name}} will walk through {{contact.company_name}} on {{appointment.date}}, {{appointment.time_window}}. Need to change it? Reply here."]]}, {"title": "C7 · Proposal follow-up · email · proposal + 7 days (repeat at + 14 with \"final\" wording)", "segs": [["p", "Subject: Any questions on the proposal? · Preview: Happy to adjust scope or schedule."], ["q", "Hi {{contact.first_name}},\n\nFollowing up on the proposal for {{contact.company_name}}. If the scope, frequency or start date needs adjusting, reply and I'll send a revised version the same day.\n\n[Accept the proposal]\n\n{{user.name}}"]]}, {"title": "C8 · Account check-in and renewal · email · every 90 days; 60 days before contract_end_date", "segs": [["p", "Subject (check-in): How is the cleaning going at {{contact.company_name}}? · Preview: 2 minutes to tell us what to improve."], ["q", "Hi {{contact.first_name}},\n\nIt's been three months, so I'd like to check in. Is there anything the crew should do differently? Many clients also add window, carpet or floor care each quarter; I can quote it with your next visit.\n\n{{user.name}}"], ["p", "Subject (renewal): Your cleaning contract renews on {{contact.contract_end_date}} · Preview: Let's review scope before then."], ["q", "Hi {{contact.first_name}},\n\nYour contract with us renews on {{contact.contract_end_date}}. Before then, I'd like 15 minutes to review what's working and adjust the scope if your space or schedule has changed.\n\n[Book a review call]\n\n{{user.name}}"]]}], "WF-03": [{"title": "T1 · Booking confirmed · SMS + email · instant (ops)", "segs": [["p", "SMS"], ["q", "You're booked, {{contact.first_name}}! {{location.name}} will clean on {{appointment.date}}, arriving {{appointment.time_window}}. Need to change it? {{appointment.manage_link}}"], ["p", "Email · Subject: Confirmed: your clean on {{appointment.date}} · Preview: Arrival window, address and what's included."], ["q", "Hi {{contact.first_name}},\n\nYour cleaning is confirmed.\n\nDate: {{appointment.date}} · Arrival window: {{appointment.time_window}} · Address: {{contact.address1}} · Service: {{appointment.service}}\n\n[Manage my booking]\n\nYour clean is covered by our 24-hour reclean guarantee.\n\n{{location.name}} · {{location.phone}}"]]}, {"title": "T2 · Reminder with add-ons · email + SMS · 72 hours before (retention)", "segs": [["p", "Email · Subject: Your clean is in 3 days. Want to add anything? · Preview: Oven, fridge, windows and more."], ["q", "Hi {{contact.first_name}},\n\nYour clean is on {{appointment.date}}. While the team is there, they can also take care of:\n• Inside the oven\n• Inside the fridge\n• Interior windows\n• Inside cabinets\n• Baseboards[Add to my clean]\n\nNeed a different day? Reschedule here."], ["p", "SMS"], ["q", "{{contact.first_name}}, want us to clean inside the oven or fridge on {{appointment.date}}? Add it in one tap: {{custom_values.addon_link}}"]]}, {"title": "T3 · Pre-cleaning with access check · SMS · 24 hours before (ops)", "segs": [["q", "Hi {{contact.first_name}}, your clean is tomorrow, {{appointment.time_window}}. Quick prep tips: {{custom_values.precleaning_instructions}} Any gate code, parking or pet notes? Just reply here."]]}, {"title": "T4 · En route · SMS · day of (ops)", "segs": [["q", "{{contact.team_name}} from {{location.name}} is on the way and should arrive around {{appointment.eta}}. See you soon!"]]}, {"title": "T5 · Completed + rating · SMS · 1 to 3 hours after the job (retention)", "segs": [["q", "All done, {{contact.first_name}}! How did we do today? Reply with a number from 1 (poor) to 5 (great). If anything was missed, we'll come back within 24 hours."]]}, {"title": "T5 reply 4 or 5 · SMS · instant (new)", "segs": [["q", "Thank you, {{contact.first_name}}! We'll pass that on to {{contact.team_name}}."]]}, {"title": "P1 · Low score (1–3) · SMS · instant + Slack alert to ops", "segs": [["q", "We're sorry it wasn't right, {{contact.first_name}}. We'll fix it at no cost under our 24-hour guarantee. A manager will call you shortly to set a time."]]}, {"title": "P2 · Low score (1–3) · save call script · same day", "segs": [["q", "Hi {{contact.first_name}}, it's [NAME] from {{location.name}}. I saw your note about today's visit and I'd like to make it right at no cost. What did we miss, and when can we come back?"]]}], "WF-04": [{"title": "P3 · Recurring plan offer · email + SMS · at enrollment", "segs": [["p", "Email · Subject: Keep your home this clean, for less · Preview: Save up to 20% with a cleaning plan."], ["q", "Hi {{contact.first_name}},\n\nGlad you loved your clean. Want it to stay that way? Pick a plan and save on every visit:\nPlan | You save | \nWeekly | 20% | \nBiweekly | 15% | \nMonthly | 10% | Same team and the same checklist on every visit. [Confirm plan terms before launch: contract length, skip policy.]\n\n[Choose my plan]\n\n{{user.name}}, {{location.name}}"], ["p", "SMS"], ["q", "{{contact.first_name}}, keep it this clean for less: weekly saves 20%, biweekly 15%, monthly 10%. Reply YES and we'll set it up, or pick here: {{custom_values.booking_link}}"]]}, {"title": "P4 · Reply YES · SMS · instant + Slack alert", "segs": [["q", "Great choice! Which works best: weekly, biweekly or monthly? Reply W, B or M and we'll lock in your discount and send your schedule."]]}, {"title": "P4b · Reply W, B or M · SMS · instant (new)", "segs": [["q", "Locked in: {{contact.plan_frequency}} cleaning at {{contact.plan_discount}} off every visit. {{user.name}} will text you within 24 hours to confirm your first date."]]}, {"title": "P6 · Last call script · owner · day 5, no reply (new)", "segs": [["q", "Hi {{contact.first_name}}, it's [NAME] from {{location.name}}. Glad the clean went well. Most customers keep it up with a biweekly visit at 15% off. Would that fit, or would monthly be easier?"]]}, {"title": "P5 · Referral · email + SMS · day 7", "segs": [["p", "Email · Subject: Give $50, get $50 · Preview: Share {{location.name}} with a friend."], ["q", "Hi {{contact.first_name}},\n\nKnow someone who'd love a cleaner home? Share your link. They get $50 off their first clean, and you get $50 off your next one when they book.\n\n[Share my link]\n\n{{location.name}}"], ["p", "SMS"], ["q", "Know someone who needs a clean home, {{contact.first_name}}? Give them $50 off and get $50 for yourself: {{contact.referral_link}}"]]}], "WF-05": [{"title": "R1 · Plan welcome · email · when the plan starts", "segs": [["p", "Subject: Welcome to your {{contact.plan_frequency}} cleaning plan · Preview: Your schedule and your discount."], ["q", "Hi {{contact.first_name}},\n\nYou're all set. Here's how your plan works:\n• Schedule: {{contact.plan_frequency}}, starting {{appointment.date}}\n• Your discount: {{contact.plan_discount}} off every visit\n• Before each visit: we text you 2 days ahead. Reply SKIP, ADD or MOVE to change it.[See my schedule]\n\nSave this number for your team: {{location.phone}}"]]}, {"title": "R2 · Visit reminder · SMS · 48 hours before every visit", "segs": [["q", "Hi {{contact.first_name}}, your next clean is {{appointment.date}}, {{appointment.time_window}}. Reply SKIP to skip it, ADD for extras, or MOVE to change the time."]]}, {"title": "R3 · Keyword replies · SMS · instant (each also posts to Slack)", "segs": [["t", "Keyword | Auto-reply | \nBOOK | Here's your booking link, {{contact.first_name}}: {{custom_values.booking_link}} It's set up with your home's details, so just pick a date. | \nSKIP | Done. Your {{appointment.date}} visit is skipped. Your next clean is {{appointment.next_date}}. | \nADD | Pick your extras for {{appointment.date}} here: {{custom_values.addon_link}} | \nMOVE | No problem. Choose a new time here: {{appointment.manage_link}} |"]]}, {"title": "R4 · Two skips in a row · SMS · after the second skip", "segs": [["q", "Hi {{contact.first_name}}, we noticed the last two visits were skipped. Would a different schedule suit you better? Reply B for biweekly or M for monthly and we'll switch it."]]}, {"title": "R5 · Cancellation save · SMS · when a cancel request comes in", "segs": [["q", "Sorry to see you go, {{contact.first_name}}. Before we cancel: would a pause or a lighter schedule help? Reply PAUSE for 30 days, M for monthly, or CANCEL to confirm."]]}, {"title": "R5a · Reply PAUSE · SMS · instant (new)", "segs": [["q", "Done, {{contact.first_name}}. Your plan is paused for 30 days and your {{contact.plan_discount}} discount stays locked in. We'll check in a week before it restarts."]]}, {"title": "R5b · Pause ending · SMS · 7 days before the pause ends (new)", "segs": [["q", "Hi {{contact.first_name}}, your cleaning plan restarts next week. Reply with the day that suits you, or MOVE to pick a time: {{appointment.manage_link}}"]]}, {"title": "R5c · Reply M · SMS · instant (new)", "segs": [["q", "Switched: you're now on monthly cleaning at 10% off. {{user.name}} will confirm your next date within 24 hours."]]}, {"title": "R5d · Reply CANCEL · SMS · instant (new)", "segs": [["q", "Your plan is cancelled, {{contact.first_name}}. Thank you for letting us clean your home. One quick question so we can improve: was it 1 price, 2 quality, 3 a move, or 4 schedule?"], ["p", "The reply to R5d sets cancel_reason (1 Price, 2 Quality, 3 Moved, 4 Schedule) and picks the WF-06 day-90 message."]]}], "WF-06": [{"title": "R6-30 · Day 30 · email", "segs": [["p", "Subject: Your home misses us (a little) · Preview: Restart in one click."], ["q", "Hi {{contact.first_name}},\n\nIt's been a month since your last clean with {{location.name}}. If you'd like to start again, your home's details and preferences are saved.\n\n[Restart my cleans]"]]}, {"title": "R6-60 · Day 60 · email", "segs": [["p", "Subject: Come back to [$X] off · Preview: For your first clean back."], ["q", "Hi {{contact.first_name}},\n\nWe'd love to have you back. Book in the next two weeks and take [$X] off your first clean.\n\n[Book my clean]"]]}, {"title": "O2 · Win-back call · day 60+, weekly list", "segs": [["q", "Hi {{contact.first_name}}, it's [NAME] from {{location.name}}. We cleaned your home until {{contact.cancel_date}} and I wanted to check in. Would a monthly visit or a one-time deep clean help right now?"]]}, {"title": "R6-90 · Day 90 · email by cancel_reason", "segs": [["p", "Price · Subject: A plan that fits your budget · Preview: Monthly visits, 10% off each one."], ["q", "Hi {{contact.first_name}},\n\nIf cost was the reason you paused, our monthly plan keeps the house in shape for less: 10% off every visit, and you can skip any month.\n\n[Start monthly cleaning]"], ["p", "Quality · Subject: We'd like a second chance · Preview: A manager checks your first clean back."], ["q", "Hi {{contact.first_name}},\n\nWe didn't get it right last time, and we'd like to fix that. Your first clean back comes with a manager quality check and our 24-hour reclean guarantee.\n\n[Give us another try]"], ["p", "Moved · Subject: New home? We may cover it · Preview: Check your new address in one step."], ["q", "Hi {{contact.first_name}},\n\nSettling into a new place? Reply with your new zip code and we'll tell you if we cover it. If we do, a move-in clean is the easiest way to start fresh.\n\n[Check my new address]"], ["p", "Schedule (or no reason) · Subject: Clean on your schedule · Preview: Any day, 7 days a week."], ["q", "Hi {{contact.first_name}},\n\nIf timing got in the way, we clean any day of the week. Pick the slot that fits and we'll keep it for you.\n\n[Pick my slot]"]]}], "WF-07": [{"title": "B1 · Refresh · SMS at day 21, email at day 35", "segs": [["p", "SMS (day 21)"], ["q", "Hi {{contact.first_name}}, it's been 3 weeks since your last clean. Ready for a refresh? Same home, same price, just pick a date: {{custom_values.booking_link}}"], ["p", "Email (day 35) · Subject: Time for a refresh? · Preview: Your home details are saved. Pick a date."], ["q", "Hi {{contact.first_name}},\n\nIt's been about a month since we cleaned your home. Book again in under a minute: your rooms and preferences are already saved.\n\nWant it to stay clean without remembering to book? Plans save 20% weekly, 15% biweekly or 10% monthly.\n\n[Book my next clean]"]]}, {"title": "B2 · Seasonal deep clean · email · 90 days after a deep clean", "segs": [["p", "Subject: Your seasonal deep clean is due · Preview: Plus a free [ADD-ON] when you book."], ["q", "Hi {{contact.first_name}},\n\nThree months on, dust settles in the places a regular clean doesn't reach: baseboards, vents, cabinets and blinds. Book your seasonal deep clean this month and we'll add [ADD-ON] for free.\n\n[Book my deep clean]"]]}, {"title": "B3 · Move-out completed · SMS + email · day 1 after the job", "segs": [["p", "SMS"], ["q", "Good luck with the move, {{contact.first_name}}! Want your new place spotless before you unpack? Reply with the new zip code and we'll check if we cover it."], ["p", "Email · Subject: Moving in somewhere new? · Preview: Start fresh with a move-in clean."], ["q", "Hi {{contact.first_name}},\n\nThanks for trusting us with your move-out. If your new home is in our area, we can clean it before the boxes arrive, so you start fresh.\n\n[Book a move-in clean]"]]}, {"title": "B4 · Referral credit unused · SMS · 14 days after the credit, then 7 days before [EXPIRY]", "segs": [["p", "First reminder"], ["q", "Good news, {{contact.first_name}}: you have a $50 credit from your referral. Use it on your next clean: {{custom_values.booking_link}}"], ["p", "Expiry reminder"], ["q", "Reminder: your $50 cleaning credit expires on [EXPIRY]. Book before then: {{custom_values.booking_link}}"]]}, {"title": "B5 · Past customer, 60+ days · SMS", "segs": [["q", "Hi {{contact.first_name}}, it's been a couple of months since we cleaned your home. Want us back? Your details are saved, just pick a date: {{custom_values.booking_link}}"]]}, {"title": "B6 · Clicked, didn't book · SMS · 24 hours after the click (new)", "segs": [["q", "Hi {{contact.first_name}}, looks like you were picking a date. Your link is still here when you're ready: {{custom_values.booking_link}} Any questions? Just reply."]]}], "WF-08": [{"title": "N1 · Not Now monthly · email · once a month", "segs": [["p", "Subject: A 10-minute reset for your kitchen · Preview: Plus your saved quote, whenever you're ready."], ["q", "Hi {{contact.first_name}},\n\nA quick tip from our team: wipe the microwave by heating a bowl of water with lemon for 3 minutes, then the grime lifts right off.\n\nWhen you'd rather have someone else handle the whole house, your quote is saved.\n\n[See my quote]"], ["p", "Rotate the tip each month (fridge, shower glass, baseboards, ceiling fans)."]]}, {"title": "N2 · Not Now re-quote · SMS · every 90 days", "segs": [["q", "Hi {{contact.first_name}}, it's {{location.name}}. Still thinking about a cleaning? We can send a fresh quote in minutes. Just reply YES. Reply STOP to opt out."]]}, {"title": "L1 · Lost check-in · SMS · day 30 after Lost", "segs": [["q", "Hi {{contact.first_name}}, quick question from {{location.name}}: did you find a cleaner you're happy with? Reply 1 if yes, 2 if you're still looking."]]}, {"title": "L1-1 · Reply 1 · SMS · instant (new)", "segs": [["q", "Glad you're sorted, {{contact.first_name}}! If you ever need a deep clean or a backup, your details are saved with us."]]}, {"title": "L1-2 · Reply 2 · SMS · instant + owner alert (new)", "segs": [["q", "Thanks, {{contact.first_name}}. Here's your quote again: {{contact.quote_link}} {{user.name}} will also give you a quick call to answer any questions."]]}, {"title": "L2 · Lost offer · email · day 60", "segs": [["p", "Subject: Still looking for the right cleaner? · Preview: [$X] off your first clean."], ["q", "Hi {{contact.first_name}},\n\nIf you're still looking, we'd like the chance to earn your trust. Your first clean comes with [$X] off and our 24-hour reclean guarantee.\n\n[Book my first clean]"]]}, {"title": "H1 · Holiday hosting · email + SMS · 3 to 4 weeks before Thanksgiving (repeat for December)", "segs": [["p", "Audience: Not Now, Lost, past one-time customers and cancelled plans."], ["p", "Email · Subject: Hosting this year? Book your clean before it fills up · Preview: Free [ADD-ON] when you book by {{custom_values.offer_deadline}}."], ["q", "Hi {{contact.first_name}},\n\nGuests on the way? Let us get the house ready while you plan the menu. Holiday dates fill fast, so book early, and if you book by {{custom_values.offer_deadline}} we'll add [ADD-ON] for free.\n\n[Pick my date]"], ["p", "SMS"], ["q", "Hosting for the holidays, {{contact.first_name}}? Book your clean by {{custom_values.offer_deadline}} and get [ADD-ON] free. Dates fill fast: {{custom_values.booking_link}} Reply STOP to opt out."]]}, {"title": "H2 · New Year reset · email · first week of January", "segs": [["p", "Subject: Start the year with a deep clean · Preview: Then keep it that way with a plan."], ["q", "Hi {{contact.first_name}},\n\nAfter the holidays, give your home a fresh start. Book a deep clean, then keep it that way with a plan that saves up to 20% on every visit.\n\n[Book my reset]"]]}], "WF-09": [{"title": "Copy rules for this drip", "segs": [["t", "Rule | Why | \nOne idea and one button per email | A single choice converts better than three (choice overload) | \nSubject ≤ 45 characters; preview text finishes the thought | Subject and preview are read as one line in the inbox | \nOpen with the reader's situation, not with Cleenora | \"You\" before \"we\" keeps attention past the first line | \nA P.S. on every email | The P.S. is the most-read line after the subject; it carries the secondary offer | \nSpecific over vague: days, hours, names, the guarantee | Concrete details are easier to believe (processing fluency) | \nReal deadlines, real reviews, real numbers only | False scarcity and invented proof damage trust and deliverability | \nA/B test the subject on every send; judge on bookings in 7 days | Opens alone reward curiosity, not intent |"]]}, {"title": "Map of triggers", "segs": [["t", "Slot | When | Neuromarketing trigger | Copy framework | Subject A | \nM01 | Day 3 | Endowment effect + question-behavior effect | Question-led micro-commitment | Your quote is saved, {{contact.first_name}} | \nM02 | Day 14 | Risk reversal + loss aversion | PAS (problem, agitate, solve) | What if we miss a spot? | \nM03 | Day 30 | Social proof from similar people (same city) | Testimonial stack | What your {{contact.city}} neighbors say | \nM04 | Month 2 | Anchoring + compromise effect (middle option) | Three-option comparison | Same clean, up to 20% less | \nM05 | Month 3 | Reciprocity (give real value first) | BAB (before, after, bridge) | A 15-minute declutter plan | \nM06 | Month 4 | Habit loop + effort contrast | List + pivot | 3 habits that keep your home clean | \nM07 | Month 5 | Fresh-start effect + Zeigarnik (unfinished checklist) | Self-check checklist | 8 places dust hides between cleans | \nM08 | Month 6 | Reciprocity + real deadline | Offer stack | A free [ADD-ON] for you, until [DATE] | \nM09 | Month 7.5 | Endowment + loss aversion | Deadline notice | Your quoted price is held until [DATE] | \nM10 | Month 9 | Mental simulation (future pacing) + time-over-money framing | AIDA with a picture opener | What would you do with your Saturday back? | \nM11 | Month 10.5 | Social currency + give-first reciprocity | Give-first referral | Give a friend $50 off (and get $50) | \nM12 | Month 12 | Autonomy (lower reactance) + consistency | Permission ask | Should we keep in touch? | \nHOT | On a click | Speed to lead + personal ownership | One-question SMS | — | \nRP | 90 days, no opens | Soft loss aversion + autonomy | \"Break-up\" email | Should I stop emailing you? |"]]}, {"title": "M01 · Day 3 · SMS + email", "segs": [["p", "Trigger: endowment (the quote already belongs to them) and the question-behavior effect (a direct question gets answered and creates a small commitment). Framework: question-led micro-commitment."], ["p", "SMS (opted-in only)"], ["q", "Hi {{contact.first_name}}, it's {{user.name}} at {{location.name}}. Your quote is saved. When would a clean help most? Reply 1 this month, 2 next month, 3 later. STOP to opt out"], ["p", "Subject A: Your quote is saved, {{contact.first_name}} · Subject B: Quick question about your clean · Preview: One reply and we'll plan around you."], ["q", "Hi {{contact.first_name}},\n\nI've saved your quote for {{contact.last_service}}, so whenever you're ready, booking takes a few clicks. No new forms, no starting over.\n\nOne quick question, so we don't reach out at the wrong time: when would a clean help most?\n\n1 · This month 2 · Next month 3 · I'm just browsing\n\nJust reply with the number. If it's 1, I'll call you today and hold a date.\n\n[See my saved quote]\n\n{{user.name}}, {{location.name}}\n\nP.S. Every clean comes with our 24-hour reclean guarantee: if anything is missed, we come back and fix it, free."], ["p", "Auto-replies: 1 → \"Great! {{user.name}} will call you today to hold a date. Prefer text? Reply with a day that works.\" (WF-10 alert) · 2 → \"Got it. I'll check in early next month, and your quote stays saved.\" · 3 → \"No pressure at all. We'll send a useful tip now and then, and your quote stays saved.\""]]}, {"title": "M02 · Day 14 · email", "segs": [["p", "Trigger: risk reversal (the guarantee removes the downside) and loss aversion (name what they lose by waiting). Framework: PAS."], ["p", "Subject A: What if we miss a spot? · Subject B: The real reason people put off hiring a cleaner · Preview: Here's exactly what happens, and what it costs you: nothing."], ["q", "Hi {{contact.first_name}},\n\nMost people don't put off booking a cleaner because of the price. They put it off because of a quiet worry: what if I pay, and it isn't done right?\n\nThen you're re-wiping counters on a Saturday, wondering why you bothered.\n\nThat's why every clean comes with one simple promise: if anything on your checklist is missed, tell us within 24 hours and we come back and fix it, free. No arguing, no fine print.\n• The same vetted team each visit, so they learn your home\n• Your checklist, done your way\n• A fix within 24 hours if anything is missedThe only risk left is the one you already know: another weekend spent cleaning.\n\n[Book with the guarantee]\n\nP.S. Your quote is still saved, so there's nothing to fill in again."]]}, {"title": "M03 · Day 30 · email", "segs": [["p", "Trigger: social proof from similar people (same city beats generic praise). Framework: testimonial stack, each review answering a different doubt."], ["p", "Subject A: What your {{contact.city}} neighbors say · Subject B: Real reviews from homes near you · Preview: Unedited, from customers who were on the fence too."], ["q", "Hi {{contact.first_name}},\n\nYou don't have to take our word for it. Here's what customers near you said after their first clean:\n\n\"[REAL REVIEW 1: one that names a specific result, such as time saved or a detail they noticed]\" — [First name], {{contact.city}}\n\n\"[REAL REVIEW 2: one about trust or having the same team]\" — [First name], {{contact.city}}\n\n\"[REAL REVIEW 3: one from a customer who hesitated before booking]\" — [First name], {{contact.city}}\n\n[RATING LINE, only if verified: \"Rated X.X stars from N reviews\"]\n\nYour quote is saved and ready whenever you'd like to see what they're talking about.\n\n[Book my first clean]\n\nP.S. Not sure which clean you need? Reply and I'll recommend one in a sentence."]]}, {"title": "M04 · Month 2 · email", "segs": [["p", "Trigger: anchoring (weekly's 20% sets the reference) and the compromise effect (the middle option feels safest). Framework: three-option comparison."], ["p", "Subject A: Same clean, up to 20% less · Subject B: How our regular customers book · Preview: Three rhythms. Pick the one that fits your home."], ["q", "Hi {{contact.first_name}},\n\nA one-time clean feels great for about a week. Then life happens.\n\nThat's why our regular customers don't book one clean at a time. They pick a rhythm and save on every visit:\nPlan | You save | Best for | \nWeekly | 20% | Busy households, kids or pets | \nBiweekly | 15% | A home that always feels guest-ready | \nMonthly | 10% | A full reset between your own upkeep | Same team every visit. Skip or move a visit with one text. [Confirm plan terms before launch.]\n\n[Choose my plan]\n\nP.S. Not ready for a plan? Your one-time quote is still saved."], ["p", "If biweekly really is the most-chosen plan, add \"Most chosen\" to that row; only state it if the data shows it."]]}, {"title": "M05 · Month 3 · email", "segs": [["p", "Trigger: reciprocity (a genuinely useful plan, no ask until the end). Framework: BAB."], ["p", "Subject A: A 15-minute declutter plan · Subject B: Why your house feels messy even after you clean · Preview: Three rules that stop clutter from coming back."], ["q", "Hi {{contact.first_name}},\n\nBefore: you clean on Saturday, and by Wednesday the counters are covered again.\n\nAfter: surfaces stay clear, and cleaning takes half the effort.\n\nThe bridge is three small rules:\n\n[KEEP EMAIL 5's THREE DECLUTTER TIPS, including the one-in-one-out rule]\n\nDecluttering is the part only you can do. The scrubbing, dusting, baseboards and floors? That's the part you can hand off.\n\n[Hand off the cleaning]\n\nP.S. Forward this to anyone who says \"I'll clean when I have time.\""]]}, {"title": "M06 · Month 4 · email", "segs": [["p", "Trigger: habit loop (small daily cues) plus effort contrast (show the line between easy daily habits and the hard jobs). Framework: list + pivot."], ["p", "Subject A: 3 habits that keep your home clean · Subject B: The 10-minute routine (and the jobs it can't fix) · Preview: Plus the one job worth handing off."], ["q", "Hi {{contact.first_name}},\n\nClean homes aren't kept clean by big weekends. They're kept clean by tiny daily habits:\n\n[KEEP EMAIL 6's THREE TIPS: make the bed, clear surfaces, a 10-minute evening tidy]\n\nHabits handle the daily mess. They don't handle grout lines, baseboards or the inside of the oven. Those are the jobs that quietly build up, and the ones our team handles on every visit.\n\n[Let the team handle the deep stuff]\n\nP.S. Pair these habits with a biweekly visit and save 15% on every clean."]]}, {"title": "M07 · Month 5 · email", "segs": [["p", "Trigger: fresh-start effect (a new season is a natural reset) and the Zeigarnik effect (an unfinished checklist nags to be completed). Framework: self-check checklist."], ["p", "Subject A: 8 places dust hides between cleans · Subject B: Your seasonal deep clean checklist · Preview: Tick them off, or let us do all eight in one visit."], ["q", "Hi {{contact.first_name}},\n\nA new season is the natural moment to reset your home, starting with the spots a regular clean doesn't reach. How many can you tick off? Baseboards Air vents Ceiling fans Inside cabinets Behind appliances Window tracks Blinds Grout linesFewer than five? You're in good company, and you're due a deep clean.\n\n[Book my seasonal deep clean]\n\nP.S. Book by [DATE] and we'll add [ADD-ON] for free."]]}, {"title": "M08 · Month 6 · email + SMS", "segs": [["p", "Trigger: reciprocity (a gift, not a discount) and a real deadline. Framework: offer stack: what you get, by when, how."], ["p", "Subject A: A free [ADD-ON] for you, until [DATE] · Subject B: {{contact.first_name}}, this one's on us · Preview: Your saved quote, plus the job nobody wants to do."], ["q", "Hi {{contact.first_name}},\n\nWe'd like to give you something: book any clean by [DATE] and we'll add [ADD-ON] at no extra cost. It's usually the job nobody wants to do. [Add its regular price only if real: \"a $X value\".]\n\nHere's everything you get:\n• Your saved quote, ready to book\n• [ADD-ON], free\n• Our 24-hour reclean guaranteeThe offer ends on [DATE].\n\n[Claim my free add-on]\n\nP.S. Your home details are saved, so booking takes a few clicks."], ["p", "SMS (opted-in only)"], ["q", "{{contact.first_name}}, a free [ADD-ON] is yours if you book by [DATE]. Your quote is saved: {{contact.quote_link}} STOP to opt out"]]}, {"title": "M09 · Month 7.5 · email (only with an approved price-hold policy)", "segs": [["p", "Trigger: endowment (their price) and loss aversion (it ends). Framework: deadline notice, short and factual."], ["p", "Subject A: Your quoted price is held until [DATE] · Subject B: Before your price expires · Preview: After that, we'll need to re-quote."], ["q", "Hi {{contact.first_name}},\n\nA quick heads-up: we've been holding your quoted price of [QUOTE AMOUNT]. That hold ends on [DATE]; after that, we'll need to re-quote at current rates.\n\nIf you've been meaning to book, this is the simplest moment to do it. Your home details are saved, and your price is locked until then.\n\n[Book at my held price]\n\nP.S. Timing still not right? Reply \"later\" and I'll check in next season."]]}, {"title": "M10 · Month 9 · email", "segs": [["p", "Trigger: mental simulation (picturing the outcome makes it feel closer) and time-over-money framing. Framework: AIDA, opening on a picture."], ["p", "Subject A: What would you do with your Saturday back? · Subject B: [X] hours a week, back in your pocket · Preview: Picture it for a second."], ["q", "Hi {{contact.first_name}},\n\nPicture next Saturday. No vacuum, no scrubbing the shower, no \"I'll do the floors after lunch.\"\n\nInstead: coffee that's still hot. A walk. A long lunch. Or nothing at all.\n\nA standard home clean takes our team about [X] hours [confirm the real average]. That's [X] hours of your week, back.\n\nYou already have the quote. The only thing left is picking the day.\n\n[Get my Saturday back]\n\nP.S. On a weekly plan, that's every Saturday back, at 20% off."]]}, {"title": "M11 · Month 10.5 · email", "segs": [["p", "Trigger: social currency (being the friend with the good tip) and give-first reciprocity. Framework: give-first referral."], ["p", "Subject A: Give a friend $50 off (and get $50) · Subject B: Know someone who's moving? · Preview: A thank-you for sharing us."], ["q", "Hi {{contact.first_name}},\n\nSomeone you know is probably moving, hosting or just tired of cleaning. Here's a way to help them, and get something back:\n• They get $50 off their first clean\n• You get $50 off yours when they bookA move-out clean helps with the deposit; a move-in clean means unpacking into a fresh home. Either way, you're the friend with the good tip.\n\n[Share my $50 link]\n\nP.S. [Only if the program allows it: your $50 credit works on your own first clean too.]"]]}, {"title": "M12 · Month 12 · email", "segs": [["p", "Trigger: autonomy (giving the choice lowers resistance) and consistency (an explicit \"yes\" raises future engagement). Framework: permission ask."], ["p", "Subject A: Should we keep in touch? · Subject B: Your call, {{contact.first_name}} · Preview: One click either way. No hard feelings."], ["q", "Hi {{contact.first_name}},\n\nIt's been a year since you asked us for a quote. We don't want to be one more email you delete, so we'll let you decide:\n\n[Yes, keep sending seasonal tips and offers]\n\n[No thanks, take me off the list]\n\nIf you choose yes, you'll hear from us about once a month, and your quote stays saved for whenever you're ready.\n\nThanks for letting us into your inbox this year.\n\n{{user.name}}, {{location.name}}"]]}, {"title": "HOT · SMS · within 1 hour of an email click (opted-in only)", "segs": [["p", "Trigger: speed to lead and personal ownership; one easy question."], ["q", "Hi {{contact.first_name}}, it's {{user.name}} at {{location.name}}. Saw you checking your quote. Want me to hold a date this week? Reply with a day that works."]]}, {"title": "RP · Re-permission · email · 90 days with no opens", "segs": [["p", "Trigger: soft loss aversion (the emails will stop) plus autonomy. Framework: \"break-up\" email, a common format for re-engaging cold lists."], ["p", "Subject A: Should I stop emailing you? · Subject B: Is this goodbye, {{contact.first_name}}? · Preview: One click to stay; otherwise we'll go quiet."], ["q", "Hi {{contact.first_name}},\n\nWe haven't heard from you in a while, and the last thing we want is to clutter your inbox.\n\nSo in 14 days, we'll stop emailing. Unless you'd like to stay: click below and you'll keep getting seasonal cleaning tips, first pick of holiday dates and your saved quote.\n\n[Keep me on the list]\n\nNo click needed if you're done. Thanks for reading."]]}], "WF-10": [{"title": "O3 · Reply alert to the owner · Slack", "segs": [["q", "New reply from {{contact.name}} ({{contact.phone}}). Last job: {{contact.last_service}} · Plan: {{contact.plan_status}} · Stage: {{contact.stage}}. Reply: \"{{message.body}}\". Owner: {{contact.assigned_user}}. Please respond within 2 hours."]]}, {"title": "O3-esc · Escalation · Slack thread · 2 hours, task still open (new)", "segs": [["q", "No response yet to {{contact.name}}'s reply from 2 hours ago. @[TEAM LEAD], can you pick this up or reassign it?"]]}, {"title": "O1 · Callback script, quote reply · within 2 hours", "segs": [["q", "Hi {{contact.first_name}}, it's [NAME] from {{location.name}}. You replied about your cleaning quote, so I wanted to help directly. Is this month still good, or would another date work better?"]]}, {"title": "O2 · Win-back call, cancelled 60+ days · weekly list", "segs": [["q", "Hi {{contact.first_name}}, it's [NAME] from {{location.name}}. We cleaned your home until {{contact.cancel_date}} and I wanted to check in. Would a monthly visit or a one-time deep clean help right now?"]]}, {"title": "O4 · Missed call follow-up · SMS · right after an unanswered call (new)", "segs": [["q", "Hi {{contact.first_name}}, it's {{user.name}} from {{location.name}}. Just tried calling about your cleaning. Reply here with a good time, or book directly: {{contact.quote_link}}"]]}], "WF-11": []};
+const Q='Quiet hours 9 am–7 pm',C='SMS consent checked',ST='STOP line',CAP='7-day marketing cap',GL='Goal exit armed',HO='Holdout excluded',PR='Workflow priority';
+const MARIA={name:'Maria Lopez',first:'Maria',sub:'Residential · sample contact',stage:'—',wf:'—',tags:['sms-opt-in'],aud:[],f:{segment:'Residential',assigned_user:'Ana'}};
+const JAMES={name:'James Carter',first:'James',sub:'Commercial · Northside Dental · sample',stage:'—',wf:'—',tags:['email-only'],aud:[],f:{segment:'Commercial',company_name:'Northside Dental'}};
+const CUST=Object.assign({},MARIA,{stage:'Booked',tags:['sms-opt-in','cln-customer'],f:{segment:'Residential',assigned_user:'Ana',last_service:'Standard clean'}});
+const PLAN=Object.assign({},MARIA,{stage:'Won · Plan',tags:['sms-opt-in','cln-customer','cln-plan-active'],f:{segment:'Residential',assigned_user:'Ana',plan_frequency:'Biweekly',plan_discount:'15%',plan_status:'Active'}});
+
+/* WF-01 shared steps */
+const W1A=[
+ {d:'Day 0 · 2:14 pm',n:'Pipeline Stage Changed',t:'Opportunity enters Quote / Estimate Provided · segment = Residential',set:{stage:'Quote / Estimate Provided',wf:'WF-01 · active'},g:'One trigger with two filters (pipeline stage + segment) replaces the three identical copies of workflow 4 for East, West/Central and Commercial.'},
+ {d:'Day 0 · 2:14 pm',n:'Goal Event',t:'Listening: Appointment booked → exit',g:'GHL allows one Goal Event per workflow. As soon as an appointment is booked from any link or call, Maria jumps to the goal and nothing else sends.',r:[GL]},
+ {d:'Day 0 · 2:14 pm',n:'Send SMS',t:'Q0 · Quote ready',c:{b:0},r:[C,Q,ST],g:'Sends under one minute after the quote. Direct quote_link instead of the generic booking page.'},
+ {d:'Day 0 · 2:14 pm',n:'Send Email',t:'Q0 · Three-option quote email',c:{b:1},g:'The email carries the plan savings (20 / 15 / 10%) so the upsell to a plan starts at the quote, not after the first clean.'},
+ {d:'Day 0 · 2:15 pm',n:'Split',t:'90% new sequence · 10% holdout (old pattern)',set:{tags:['+cln-path-new']},g:'GHL Split sends contacts down random paths by percentage and keeps them on that path. Maria lands in the 90%. The 10% holdout keeps the old 4-SMS pattern so the dashboard can prove lift.',r:[HO]},
+ {d:'Day 0 · 2:15 pm',n:'Add Contact Tag',t:'aud-quote-open',set:{tags:['+aud-quote-open'],aud:['+Meta · Quote, not booked']},g:'The tag is what WF-11 listens to. It adds Maria to the "Quote, not booked" Meta audience, so retargeting starts the same day.'},
+ {d:'Day 1 · 10:00 am',n:'Wait',t:'Until Day 1, 10:00 am contact time',g:'Wait step with a time window, so nothing lands outside 9 am–7 pm in the contact\'s time zone.',r:[Q]},
+ {d:'Day 1 · 10:00 am',n:'Send SMS + Send Email',t:'Q1 · Proof and 24-hour reclean guarantee',c:{b:2},r:[C,Q,CAP]},
+ {d:'Day 1 → 4',n:'Wait',t:'Wait for event: Customer Replied · timeout 3 days',g:'If Maria replies, WF-10 takes the reply to a person. If not, the timeout path continues to the perk.'}
+];
+const W1Q2=[
+ {d:'Day 4 · 10:00 am',n:'Update Contact Field',t:'offer_deadline = Tue, Dec 8',set:{f:{offer_deadline:'Tue, Dec 8'}},g:'A real deadline stored on the contact, so the email can print it and the perk can be honoured by the team.'},
+ {d:'Day 4 · 10:00 am',n:'Send SMS + Send Email',t:'Q2 · Free [ADD-ON] if booked in 48 hours',c:{b:3},r:[C,Q,CAP],g:'This is the first upsell point: a free add-on that previews the add-on menu (oven, fridge, windows) Maria can later buy.'}
+];
+const W1Q3=[
+ {d:'Day 5 → 11',n:'Wait',t:'Until Day 11, 10:00 am'},
+ {d:'Day 11 · 10:00 am',n:'Send SMS + Send Email',t:'Q3 · Last call, [$X] off',c:{b:4},r:[C,Q,ST,CAP]}
+];
+
+const WF={
+'WF-01':{name:'Quote follow-up',sprint:2,live:'Live Dec 2',trigger:'Pipeline Stage Changed → Quote / Estimate Provided (Residential)',exit:'Appointment booked (goal), negative reply, STOP',kpi:'Quote → booking rate vs the 10% holdout',contact:MARIA,
+ scen:[
+  {label:'Books on day 4',steps:[...W1A,...W1Q2,
+    {d:'Day 5 · 6:40 pm',n:'Appointment Status',t:'Appointment booked from quote_link',inb:'(Maria books Sat, Dec 12 through the quote link)',set:{stage:'Booked'},g:'Booking on the quote link fires the appointment trigger.'},
+    {d:'Day 5 · 6:40 pm',n:'Goal Event',t:'Goal reached → exit WF-01',set:{wf:'WF-03 · Visit touches',tags:['-aud-quote-open','+cln-customer'],aud:['-Meta · Quote, not booked'],f:{first_booking:'Sat, Dec 12'}},g:'The goal ends the sequence, removes the retargeting tag (WF-11 drops her from the audience) and hands Maria to WF-03.'}]},
+  {label:'Replies on day 2',steps:[...W1A.slice(0,8),
+    {d:'Day 2 · 11:32 am',n:'Customer Replied',t:'Inbound SMS',inb:'Can you do Saturday mornings? We have two dogs.',g:'A reply that is not a keyword is a buying signal. The wait step ends early.'},
+    {d:'Day 2 · 11:32 am',n:'Add to Workflow',t:'WF-10 · Owner alert',c:{w:'WF-10',b:0},set:{f:{reply_outcome:'—'}},g:'WF-10 posts the alert with the reply text and opens a 2-hour call task for the assigned owner.'},
+    {d:'Day 2 · 11:33 am',n:'Wait',t:'Pause the sequence 3 days',g:'The automated perk waits while a person is talking to Maria.'},
+    {d:'Day 2 · 1:05 pm',n:'Add Task',t:'Owner calls with the O1 script',c:{w:'WF-10',b:2}},
+    {d:'Day 2 · 1:12 pm',n:'Appointment Status',t:'Booked on the call',set:{stage:'Booked',f:{reply_outcome:'Booked'}}},
+    {d:'Day 2 · 1:12 pm',n:'Goal Event',t:'Goal reached → exit WF-01',set:{wf:'WF-03 · Visit touches',tags:['-aud-quote-open','+cln-customer'],aud:['-Meta · Quote, not booked']}}]},
+  {label:'Replies LATER on day 11',steps:[...W1A,...W1Q2,...W1Q3,
+    {d:'Day 11 · 4:20 pm',n:'Customer Replied',t:'Inbound SMS',inb:'LATER'},
+    {d:'Day 11 · 4:20 pm',n:'If / Else',t:'Reply contains LATER → branch'},
+    {d:'Day 11 · 4:20 pm',n:'Send SMS',t:'Reply LATER confirmation',c:{b:5},r:[C]},
+    {d:'Day 11 · 4:21 pm',n:'Create / Update Opportunity',t:'Move to Long Term Nurture · nurture_timing = Next month',set:{stage:'Long Term Nurture',wf:'WF-09 · Long Term Nurture',tags:['-aud-quote-open','+aud-ltn'],aud:['-Meta · Quote, not booked','+Meta · Long Term Nurture'],f:{nurture_timing:'Next month'}},g:'LATER is a soft yes. Instead of losing Maria, the stage change enrolls her in WF-09 with a 30-day reminder.'}]},
+  {label:'No reply → day 12 handoff',steps:[...W1A,...W1Q2,...W1Q3,
+    {d:'Day 12 · 10:00 am',n:'If / Else',t:'Still not booked?'},
+    {d:'Day 12 · 10:00 am',n:'Create / Update Opportunity',t:'Stage Not Now · lost_reason = No response',set:{stage:'Not Now',wf:'WF-08 · Not Now',tags:['-aud-quote-open','+aud-lost'],aud:['-Meta · Quote, not booked','+Meta · Not Now / Lost'],f:{lost_reason:'No response'}},g:'Today the opportunity sits in Quote forever. The stage move hands Maria to WF-08 and switches her ad audience.'}]},
+  {label:'In the 10% holdout',steps:[...W1A.slice(0,4),
+    {d:'Day 0 · 2:15 pm',n:'Split',t:'Path B · holdout (10%)',set:{tags:['+cln-holdout']},g:'Same Split action. Maria stays on path B for the life of the test, so results are clean.',r:[HO]},
+    {d:'Day 0 → 7',n:'Send SMS',t:'Legacy workflow 4 · 4 SMS (unchanged)',c:{note:'The holdout gets today\'s 4-SMS pattern unchanged. No new copy, no add-on, no retargeting tag.'}},
+    {d:'Day 30',n:'Opportunity widgets',t:'Dashboard: booking rate, path A vs path B',g:'An opportunity widget filtered by tag cln-path-new vs cln-holdout shows the lift. Judge on bookings, not opens.'}]}
+ ]},
+'WF-02':{name:'Commercial (B2B)',sprint:2,live:'A/B live Dec 9 · C Jan 15',trigger:'Pipeline Stage Changed → Quote / Estimate Provided (Commercial)',exit:'Walkthrough booked (part B), Lost with reason, STOP',kpi:'Walkthroughs booked and proposals won',contact:JAMES,
+ scen:[
+  {label:'Walkthrough → proposal won',steps:[
+    {d:'Day 0 · 9:20 am',n:'Pipeline Stage Changed',t:'Quote / Estimate Provided · segment = Commercial',set:{stage:'Quote / Estimate Provided',wf:'WF-02 · part A'},g:'Commercial leads no longer get the residential SMS.'},
+    {d:'Day 0 · 9:20 am',n:'Send Email',t:'C1 · Request received, schedule a site walk',c:{b:0},r:[Q]},
+    {d:'Day 0 · 9:21 am',n:'Add Task',t:'Call within 2 business hours (O1-B2B)',c:{b:1},set:{f:{assigned_user:'Rep · Luis'}}},
+    {d:'Day 0 · 9:21 am',n:'Send Slack Message',t:'Alert: company, service, owner',c:{note:'Slack: New commercial request · Northside Dental · office cleaning · owner Luis'}},
+    {d:'Day 2 · 10:00 am',n:'Send Email',t:'C2 · Why businesses choose us',c:{b:2}},
+    {d:'Day 3 · 3:00 pm',n:'Appointment Status',t:'Walkthrough booked',set:{stage:'Walkthrough booked',wf:'WF-02 · part B'}},
+    {d:'Day 3 · 3:00 pm',n:'Send Email + Send SMS',t:'C6 · Walkthrough confirmed',c:{b:6}},
+    {d:'Day 7',n:'Add Task',t:'Send the proposal within 24 h',set:{f:{proposal_sent_date:'Dec 16'}}},
+    {d:'Day 14',n:'Send Email',t:'C7 · Questions on the proposal?',c:{b:7}},
+    {d:'Day 16',n:'Opportunity Status Changed',t:'Won · contract signed',set:{stage:'Won',wf:'WF-02 · part C',f:{contract_end_date:'Mar 31, 2027'}}},
+    {d:'Every 90 days',n:'Custom Date Reminder',t:'C8 · Account check-in, scope expansion',c:{b:8,only:'Subject (check-in)'},g:'Part C is the B2B upsell: windows, carpets, floors and more sites, asked at every quarterly check-in.'},
+    {d:'60 days before contract_end_date',n:'Custom Date Reminder',t:'C8 · Renewal conversation',c:{b:8,only:'Subject (renewal)'}}]},
+  {label:'No walkthrough → nurture',steps:[
+    {d:'Day 0 · 9:20 am',n:'Pipeline Stage Changed',t:'Quote / Estimate Provided · segment = Commercial',set:{stage:'Quote / Estimate Provided',wf:'WF-02 · part A'}},
+    {d:'Day 0 · 9:20 am',n:'Send Email',t:'C1 · Request received',c:{b:0}},
+    {d:'Day 0 · 9:21 am',n:'Add Task',t:'First call (O1-B2B)',c:{b:1}},
+    {d:'Day 2',n:'Send Email',t:'C2 · Why businesses choose us',c:{b:2}},
+    {d:'Day 5',n:'Add Task + Send Email',t:'Second call · C3 nudge',c:{b:3}},
+    {d:'Day 10',n:'Send Email',t:'C4 · Who else should see this?',c:{b:4}},
+    {d:'Day 30',n:'If / Else',t:'No walkthrough booked'},
+    {d:'Day 30',n:'Create / Update Opportunity',t:'Long Term Nurture · lost_reason = No response',set:{stage:'Long Term Nurture',f:{lost_reason:'No response'}}},
+    {d:'Day 30, then monthly × 3',n:'Drip Mode',t:'C5 · B2B nurture',c:{b:5},g:'Monthly B2B email for 90 days, rotating the second paragraph.'}]}
+ ]},
+'WF-03':{name:'Visit touches',sprint:4,live:'Feb 2027 · after Koala audit',trigger:'Appointment Status → booked (not part of a plan)',exit:'Appointment cancelled (to WF-07) or check-in routed',kpi:'Add-on attach rate, rating replies, saves',contact:Object.assign({},MARIA,{stage:'Booked',tags:['sms-opt-in','cln-customer']}),koala:true,
+ scen:[
+  {label:'Rates the visit 5',steps:[
+    {d:'Dec 5 · 6:40 pm',n:'Appointment Status',t:'Appointment booked for Sat, Dec 12',set:{wf:'WF-03 · active'},g:'Appointments live in Booking Koala. This trigger only works once the Koala audit confirms bookings reach GHL in real time.'},
+    {d:'Dec 5 · 6:40 pm',n:'Send SMS + Send Email',t:'T1 · Booking confirmed (ops)',c:{b:0}},
+    {d:'Dec 9 · 10:00 am',n:'Wait',t:'Until 72 h before the visit'},
+    {d:'Dec 9 · 10:00 am',n:'Send Email + Send SMS',t:'T2 · Add-on menu, one tap',c:{b:1},r:[C,Q],g:'The pre-visit upsell. One-tap addon_link to oven, fridge, windows, cabinets and baseboards.'},
+    {d:'Dec 11 · 10:00 am',n:'Send SMS',t:'T3 · Prep tips + access, pets, parking',c:{b:2}},
+    {d:'Dec 12 · 9:15 am',n:'Send SMS',t:'T4 · Team on the way',c:{b:3}},
+    {d:'Dec 12 · 1:30 pm',n:'Appointment Status',t:'Visit completed',set:{f:{last_service:'Standard clean, Dec 12',last_service_date:'Dec 12'}}},
+    {d:'Dec 12 · 3:30 pm',n:'Send SMS',t:'T5 · How did we do? Reply 1–5',c:{b:4},r:[C,Q]},
+    {d:'Dec 12 · 4:02 pm',n:'Customer Replied',t:'Inbound SMS',inb:'5'},
+    {d:'Dec 12 · 4:02 pm',n:'If / Else',t:'Reply is 4 or 5',set:{f:{last_rating:'5'},tags:['+cln-rated-high']}},
+    {d:'Dec 12 · 4:02 pm',n:'Send SMS',t:'Thank-you reply',c:{b:5}},
+    {d:'Dec 13 · 4:02 pm',n:'Add to Workflow',t:'WF-04 · Plan offer and referral',set:{wf:'WF-04 · Plan offer'},g:'A happy customer 24 hours after the visit is the best moment for the plan upsell.'}]},
+  {label:'Rates the visit 2',steps:[
+    {d:'Dec 12 · 1:30 pm',n:'Appointment Status',t:'Visit completed',set:{wf:'WF-03 · active',f:{last_service:'Standard clean, Dec 12'}}},
+    {d:'Dec 12 · 3:30 pm',n:'Send SMS',t:'T5 · How did we do? Reply 1–5',c:{b:4}},
+    {d:'Dec 12 · 3:51 pm',n:'Customer Replied',t:'Inbound SMS',inb:'2. The guest bathroom was skipped.'},
+    {d:'Dec 12 · 3:51 pm',n:'If / Else',t:'Reply is 1 to 3',set:{f:{last_rating:'2'},tags:['+cln-rated-low']}},
+    {d:'Dec 12 · 3:51 pm',n:'Send SMS',t:'P1 · Apology + 24-hour reclean',c:{b:6}},
+    {d:'Dec 12 · 3:51 pm',n:'Send Slack Message',t:'Ops alert with the reply text',c:{note:'Slack #ops: Low rating (2) · Maria Lopez · "The guest bathroom was skipped." · Team Rosa · call today'}},
+    {d:'Dec 12 · 4:30 pm',n:'Add Task',t:'P2 · Ops manager save call',c:{b:7},g:'No plan offer goes to an unhappy customer. WF-04 is skipped on this path.'}]}
+ ]},
+'WF-04':{name:'Plan offer and referral',sprint:4,live:'Feb 2027 · after Koala audit',trigger:'Add to Workflow from WF-03 (rating 4–5 or no reply in 24 h)',exit:'Negative reply or STOP',kpi:'One-time → plan conversion, referrals sent',contact:Object.assign({},CUST,{tags:['sms-opt-in','cln-customer','cln-rated-high']}),koala:true,
+ scen:[
+  {label:'Says YES → biweekly',steps:[
+    {d:'Dec 13 · 4:02 pm',n:'Add to Workflow',t:'Enrolled by WF-03',set:{wf:'WF-04 · active'}},
+    {d:'Dec 13 · 4:02 pm',n:'Send Email + Send SMS',t:'P3 · Plan offer with 20 / 15 / 10%',c:{b:0},r:[C,Q,CAP],g:'The old pitch never mentioned the discount. This one leads with it.'},
+    {d:'Dec 13 · 5:10 pm',n:'Customer Replied',t:'Inbound SMS',inb:'YES'},
+    {d:'Dec 13 · 5:10 pm',n:'Send SMS',t:'P4 · Reply W, B or M',c:{b:1}},
+    {d:'Dec 13 · 5:14 pm',n:'Customer Replied',t:'Inbound SMS',inb:'B'},
+    {d:'Dec 13 · 5:14 pm',n:'Update Contact Field',t:'plan_frequency = Biweekly · plan_discount = 15%',set:{f:{plan_frequency:'Biweekly',plan_discount:'15%'}}},
+    {d:'Dec 13 · 5:14 pm',n:'Send SMS',t:'P4b · Locked in',c:{b:2}},
+    {d:'Dec 14',n:'Add Task',t:'Owner confirms the schedule within 24 h',set:{f:{plan_status:'Active'},tags:['+cln-plan-active'],stage:'Won · Plan'},g:'plan_status = Active starts WF-05.'},
+    {d:'Dec 20',n:'Send Email + Send SMS',t:'P5 · Give $50, get $50',c:{b:4},set:{wf:'WF-05 · Recurring'}}]},
+  {label:'No reply → rebooking',steps:[
+    {d:'Dec 13',n:'Add to Workflow',t:'Enrolled by WF-03',set:{wf:'WF-04 · active'}},
+    {d:'Dec 13',n:'Send Email + Send SMS',t:'P3 · Plan offer',c:{b:0}},
+    {d:'Dec 18',n:'Add Task',t:'P6 · Owner\'s last call',c:{b:3}},
+    {d:'Dec 20',n:'Send Email + Send SMS',t:'P5 · Referral',c:{b:4}},
+    {d:'Dec 21',n:'If / Else',t:'No plan started'},
+    {d:'Dec 21',n:'Add Contact Tag',t:'aud-one-time-no-plan',set:{tags:['+aud-one-time-no-plan'],aud:['+Meta · One-time, no plan'],wf:'WF-07 · Rebooking'},g:'Retargeting shows "Same clean, up to 20% less" while WF-07 asks for the next booking.'}]}
+ ]},
+'WF-05':{name:'Recurring customers',sprint:4,live:'Feb 2027 · after Koala audit',trigger:'Contact Changed → plan_status = Active',exit:'plan_status = Cancelled (to WF-06)',kpi:'Plan retention, saves from cancel requests',contact:PLAN,koala:true,
+ scen:[
+  {label:'Skips twice → monthly',steps:[
+    {d:'Jan 4',n:'Contact Changed',t:'plan_status = Active',set:{wf:'WF-05 · active'}},
+    {d:'Jan 4',n:'Send Email',t:'R1 · Plan welcome',c:{b:0}},
+    {d:'Jan 12 · 10:00 am',n:'Send SMS',t:'R2 · Visit reminder, 48 h before',c:{b:1}},
+    {d:'Jan 12 · 12:40 pm',n:'Customer Replied',t:'Inbound SMS',inb:'SKIP'},
+    {d:'Jan 12 · 12:40 pm',n:'Send SMS + Send Slack Message',t:'R3 · SKIP auto-reply',c:{b:2,only:'SKIP'},set:{f:{skip_count:'1'}}},
+    {d:'Jan 26 · 10:00 am',n:'Send SMS',t:'R2 · Next visit reminder',c:{b:1}},
+    {d:'Jan 26 · 11:05 am',n:'Customer Replied',t:'Inbound SMS',inb:'SKIP'},
+    {d:'Jan 26 · 11:05 am',n:'If / Else',t:'skip_count = 2 in a row',set:{f:{skip_count:'2'}}},
+    {d:'Jan 26 · 11:05 am',n:'Send SMS',t:'R4 · Would a lighter schedule help?',c:{b:3},g:'Two skips are an early churn signal. The save offer goes out before the cancel request.'},
+    {d:'Jan 26 · 11:20 am',n:'Customer Replied',t:'Inbound SMS',inb:'M'},
+    {d:'Jan 26 · 11:20 am',n:'Update Contact Field',t:'plan_frequency = Monthly · plan_discount = 10%',c:{b:7},set:{f:{plan_frequency:'Monthly',plan_discount:'10%',skip_count:'0'}}}]},
+  {label:'CANCEL → PAUSE',steps:[
+    {d:'Feb 9',n:'Send SMS',t:'R2 · Visit reminder',c:{b:1},set:{wf:'WF-05 · active'}},
+    {d:'Feb 9 · 2:10 pm',n:'Customer Replied',t:'Inbound SMS',inb:'CANCEL'},
+    {d:'Feb 9 · 2:10 pm',n:'Send SMS',t:'R5 · Pause, monthly or cancel',c:{b:4}},
+    {d:'Feb 9 · 2:30 pm',n:'Customer Replied',t:'Inbound SMS',inb:'PAUSE'},
+    {d:'Feb 9 · 2:30 pm',n:'Update Contact Field',t:'plan_status = Paused · pause_end = Mar 11',c:{b:5},set:{f:{plan_status:'Paused',pause_end:'Mar 11'},tags:['-cln-plan-active','+cln-plan-paused']}},
+    {d:'Mar 4',n:'Custom Date Reminder',t:'7 days before pause_end',c:{b:6}},
+    {d:'Mar 11',n:'Update Contact Field',t:'plan_status = Active',set:{f:{plan_status:'Active'},tags:['+cln-plan-active','-cln-plan-paused']},g:'A pause keeps the customer and the discount. Today a cancel request simply ends the plan.'}]},
+  {label:'CANCEL confirmed',steps:[
+    {d:'Feb 9 · 2:10 pm',n:'Customer Replied',t:'Inbound SMS',inb:'CANCEL',set:{wf:'WF-05 · active'}},
+    {d:'Feb 9 · 2:10 pm',n:'Send SMS',t:'R5 · Save offer',c:{b:4}},
+    {d:'Feb 9 · 2:25 pm',n:'Customer Replied',t:'Inbound SMS',inb:'CANCEL'},
+    {d:'Feb 9 · 2:25 pm',n:'Send SMS',t:'R5d · Cancelled, ask why',c:{b:8},set:{f:{plan_status:'Cancelled',cancel_date:'Feb 9'},tags:['-cln-plan-active']}},
+    {d:'Feb 9 · 2:31 pm',n:'Customer Replied',t:'Inbound SMS',inb:'1'},
+    {d:'Feb 9 · 2:31 pm',n:'Update Contact Field',t:'cancel_reason = Price',set:{f:{cancel_reason:'Price'},wf:'WF-06 · Win-back',stage:'Cancelled'},g:'The reason picks the day-90 win-back message in WF-06.'}]}
+ ]},
+'WF-06':{name:'Win-back',sprint:4,live:'Feb 2027 · after Koala audit',trigger:'Contact Changed → plan_status = Cancelled',exit:'Booked or plan restarted (goal), STOP, day 91',kpi:'Cancelled customers who come back within 90 days',contact:Object.assign({},CUST,{stage:'Cancelled',f:{segment:'Residential',assigned_user:'Ana',plan_status:'Cancelled',cancel_date:'Feb 9',cancel_reason:'Quality'}}),koala:true,
+ scen:[
+  {label:'Returns on day 62',steps:[
+    {d:'Day 0',n:'Contact Changed',t:'plan_status = Cancelled',set:{wf:'WF-06 · active'}},
+    {d:'Day 0',n:'Add Contact Tag',t:'aud-cancelled',set:{tags:['+aud-cancelled'],aud:['+Meta · Cancelled']}},
+    {d:'Day 30',n:'Send Email',t:'R6-30 · Restart in one click',c:{b:0}},
+    {d:'Day 60',n:'Send Email',t:'R6-60 · [$X] off the first clean back',c:{b:1}},
+    {d:'Day 60',n:'Add to Workflow',t:'WF-10 weekly call list · O2 script',c:{b:2}},
+    {d:'Day 62',n:'Appointment Status',t:'Booked after the call',set:{stage:'Booked'}},
+    {d:'Day 62',n:'Goal Event',t:'Goal reached → exit',set:{wf:'WF-03 · Visit touches',tags:['-aud-cancelled'],aud:['-Meta · Cancelled']}}]},
+  {label:'No return → day 90 by reason',steps:[
+    {d:'Day 0',n:'Contact Changed',t:'plan_status = Cancelled',set:{wf:'WF-06 · active',tags:['+aud-cancelled'],aud:['+Meta · Cancelled']}},
+    {d:'Day 30',n:'Send Email',t:'R6-30',c:{b:0}},
+    {d:'Day 60',n:'Send Email',t:'R6-60',c:{b:1}},
+    {d:'Day 90',n:'If / Else',t:'Branch on cancel_reason = Quality'},
+    {d:'Day 90',n:'Send Email',t:'R6-90 · Quality version',c:{b:3,only:'Quality'},g:'Four versions (Price, Quality, Moved, Schedule). Each answers the reason the customer gave.'},
+    {d:'Day 91',n:'Remove Contact Tag',t:'aud-cancelled → Long Term Nurture',set:{tags:['-aud-cancelled','+aud-ltn'],aud:['-Meta · Cancelled','+Meta · Long Term Nurture'],stage:'Long Term Nurture',wf:'WF-09 · Long Term Nurture'}}]}
+ ]},
+'WF-07':{name:'Rebooking',sprint:4,live:'Feb 2027 · after Koala audit',trigger:'Days since last_service_date (no future booking, no plan, no DND)',exit:'Appointment booked (goal) or STOP',kpi:'Repeat bookings from one-time customers',contact:Object.assign({},CUST,{f:{segment:'Residential',assigned_user:'Ana',last_service:'Standard clean',last_service_date:'Dec 12'}}),koala:true,
+ scen:[
+  {label:'Clicks, books next day',steps:[
+    {d:'Jan 2',n:'Custom Date Reminder',t:'21 days after last_service_date',set:{wf:'WF-07 · active'}},
+    {d:'Jan 2',n:'If / Else',t:'No future booking · no cln-plan-active · no cln-dnd-marketing',g:'Entry checks stop double messaging when another workflow already owns the contact.',r:[PR]},
+    {d:'Jan 2 · 10:00 am',n:'Send SMS',t:'B1 · Refresh, same price',c:{b:0,only:'SMS'},r:[C,Q,CAP]},
+    {d:'Jan 2 · 8:15 pm',n:'Trigger Link Clicked',t:'booking_link clicked, no booking'},
+    {d:'Jan 3 · 8:15 pm',n:'Send SMS',t:'B6 · Your link is still here',c:{b:5}},
+    {d:'Jan 3 · 8:40 pm',n:'Appointment Status',t:'Booked',set:{stage:'Booked'}},
+    {d:'Jan 3 · 8:40 pm',n:'Goal Event',t:'Goal reached → exit',set:{wf:'WF-03 · Visit touches'}}]},
+  {label:'Past customer 60 days',steps:[
+    {d:'Jan 2',n:'Custom Date Reminder',t:'Day 21',c:{b:0,only:'SMS'},set:{wf:'WF-07 · active'}},
+    {d:'Jan 16',n:'Send Email',t:'B1 · Day 35 email with plan savings',c:{b:0,only:'Email'}},
+    {d:'Feb 10',n:'Send SMS',t:'B5 · Details saved, pick a date',c:{b:4}},
+    {d:'Feb 10',n:'Add Contact Tag',t:'aud-past-60',set:{tags:['+aud-past-60'],aud:['+Meta · Past customers 60+ days']}}]},
+  {label:'Move-out customer',steps:[
+    {d:'Dec 12',n:'Appointment Status',t:'Move-out clean completed',set:{wf:'WF-07 · active',f:{last_service:'Move-out clean'}}},
+    {d:'Dec 13 · 10:00 am',n:'Send SMS + Send Email',t:'B3 · Move-in clean at the new address',c:{b:2}},
+    {d:'Dec 13 · 1:12 pm',n:'Customer Replied',t:'Inbound SMS',inb:'75034'},
+    {d:'Dec 13 · 1:12 pm',n:'Add to Workflow',t:'WF-10 · Owner checks the zip and calls',c:{w:'WF-10',b:0},set:{f:{new_zip:'75034'}}}]},
+  {label:'Deep clean + referral credit',steps:[
+    {d:'Dec 12',n:'Appointment Status',t:'Deep clean completed',set:{wf:'WF-07 · active',f:{last_service:'Deep clean',last_deep_clean:'Dec 12'}}},
+    {d:'Dec 20',n:'Contact Changed',t:'Referral credit earned (friend booked with her link)',set:{f:{referral_credit:'$50',referral_credit_expiry:'Mar 20'}}},
+    {d:'Jan 3 · 10:00 am',n:'Send SMS',t:'B4 · You have a $50 credit (14 days after)',c:{b:3,only:'First reminder'},r:[C,Q,CAP]},
+    {d:'Mar 12 · 10:00 am',n:'Custom Date Reminder',t:'7 days before referral_credit_expiry',c:{b:3,only:'Expiry reminder'}},
+    {d:'Mar 12',n:'Custom Date Reminder',t:'90 days after the deep clean',set:{}},
+    {d:'Mar 12 · 10:00 am',n:'Send Email',t:'B2 · Seasonal deep clean + free [ADD-ON]',c:{b:1},r:[CAP],g:'7-day cap: the B4 expiry SMS and B2 fall in the same week, so GHL sends B2 only if no marketing message went out in the last 7 days. Here the cap moves B2 to Mar 19.'},
+    {d:'Mar 19 · 6:05 pm',n:'Appointment Status',t:'Deep clean booked, credit applied',set:{stage:'Booked',f:{referral_credit:'used'}}},
+    {d:'Mar 19',n:'Goal Event',t:'Goal reached → exit',set:{wf:'WF-03 · Visit touches'}}]}
+ ]},
+'WF-08':{name:'Not Now and Lost',sprint:3,live:'Holiday send Dec 1 · full Jan 6',trigger:'Pipeline Stage Changed → Not Now or Lost',exit:'Booked (goal), STOP, reply 1 to L1, 12 months',kpi:'Re-quotes and bookings from Not Now / Lost',contact:MARIA,
+ scen:[
+  {label:'Lost → replies 2',steps:[
+    {d:'Day 0',n:'Pipeline Stage Changed',t:'Opportunity → Lost',set:{stage:'Lost',wf:'WF-08 · Lost path',tags:['+aud-lost'],aud:['+Meta · Not Now / Lost']}},
+    {d:'Day 30 · 10:00 am',n:'Send SMS',t:'L1 · Did you find a cleaner?',c:{b:2},r:[C,Q,ST]},
+    {d:'Day 30 · 12:04 pm',n:'Customer Replied',t:'Inbound SMS',inb:'2'},
+    {d:'Day 30 · 12:04 pm',n:'Send SMS',t:'L1-2 · Quote link again',c:{b:4}},
+    {d:'Day 30 · 12:04 pm',n:'Add to Workflow',t:'WF-10 owner alert',c:{w:'WF-10',b:0}}]},
+  {label:'Not Now monthly + holiday',steps:[
+    {d:'Day 0',n:'Pipeline Stage Changed',t:'Opportunity → Not Now (from WF-01 day 12)',set:{stage:'Not Now',wf:'WF-08 · Not Now path',tags:['+aud-lost'],aud:['+Meta · Not Now / Lost']}},
+    {d:'Monthly',n:'Drip Mode',t:'N1 · One tip + the saved quote',c:{b:0}},
+    {d:'Dec 1',n:'Send Email + Send SMS',t:'H1 · Holiday hosting (bulk send)',c:{b:6},g:'Ships in Sprint 2 as a one-off send, before the full Not Now path is built.'},
+    {d:'Every 90 days',n:'Send SMS',t:'N2 · Fresh quote? Reply YES',c:{b:1}},
+    {d:'Day 90 · 1:15 pm',n:'Customer Replied',t:'Inbound SMS',inb:'YES'},
+    {d:'Day 90 · 1:15 pm',n:'Add to Workflow',t:'WF-10 owner alert',c:{w:'WF-10',b:0}}]},
+  {label:'Lost → chose a competitor',steps:[
+    {d:'Day 0',n:'Pipeline Stage Changed',t:'Opportunity → Lost',set:{stage:'Lost',wf:'WF-08 · Lost path'}},
+    {d:'Day 30',n:'Send SMS',t:'L1',c:{b:2}},
+    {d:'Day 30',n:'Customer Replied',t:'Inbound SMS',inb:'1'},
+    {d:'Day 30',n:'Send SMS',t:'L1-1 · Glad you\'re sorted',c:{b:3}},
+    {d:'Day 30',n:'Update Contact Field',t:'lost_reason = Chose competitor · holiday sends only',set:{f:{lost_reason:'Chose competitor'},tags:['+cln-holiday-only']}},
+    {d:'Jan 4',n:'Send Email',t:'H2 · New Year reset',c:{b:7}}]},
+  {label:'Lost → no reply → day 60 offer',steps:[
+    {d:'Day 0',n:'Pipeline Stage Changed',t:'Opportunity → Lost',set:{stage:'Lost',wf:'WF-08 · Lost path',tags:['+aud-lost'],aud:['+Meta · Not Now / Lost']}},
+    {d:'Day 30',n:'Send SMS',t:'L1 · Did you find a cleaner?',c:{b:2},r:[C,Q,ST]},
+    {d:'Day 30 → 60',n:'Wait',t:'No reply'},
+    {d:'Day 60',n:'Send Email',t:'L2 · [$X] off + reclean guarantee',c:{b:5},r:[CAP]},
+    {d:'Day 61',n:'Create / Update Opportunity',t:'Join the Not Now path (monthly N1)',set:{stage:'Not Now',wf:'WF-08 · Not Now path'}},
+    {d:'Monthly',n:'Drip Mode',t:'N1 · One tip + the saved quote',c:{b:0}}]}
+ ]},
+'WF-09':{name:'Long Term Nurture',sprint:3,live:'Fixes Nov 13 · v2 Jan 13',trigger:'Pipeline Stage Changed → Long Term Nurture',exit:'Booked (goal), STOP, cln-sunset',kpi:'Bookings from nurture vs the 10% holdout',contact:MARIA,
+ scen:[
+  {label:'Clicks → HOT → booked',steps:[
+    {d:'Day 0',n:'Pipeline Stage Changed',t:'Opportunity → Long Term Nurture',set:{stage:'Long Term Nurture',wf:'WF-09 · active',tags:['+aud-ltn'],aud:['+Meta · Long Term Nurture']}},
+    {d:'Day 0',n:'Split',t:'90% new drip · 10% holdout',set:{tags:['+cln-path-new']},r:[HO]},
+    {d:'Day 3',n:'Send SMS + Send Email',t:'M01 · Your quote is saved',c:{b:2},r:[C,Q,ST]},
+    {d:'Day 14',n:'Split',t:'Subject A / B, 50 / 50',g:'Every send tests a subject line. Judge the winner on bookings within 7 days, not opens.'},
+    {d:'Day 14',n:'Send Email',t:'M02 · What if we miss a spot?',c:{b:3}},
+    {d:'Day 30',n:'Send Email',t:'M03 · Neighbors\' reviews',c:{b:4}},
+    {d:'Month 2',n:'Send Email',t:'M04 · Same clean, up to 20% less',c:{b:5}},
+    {d:'Month 2 · 7:48 pm',n:'Email Events',t:'Clicked a link in M04',set:{tags:['+cln-hot']}},
+    {d:'Month 2 · 7:49 pm',n:'Send SMS',t:'HOT · Want me to hold a date?',c:{b:14},r:[C,Q],g:'Speed to lead: within one hour of the click, from the owner\'s name.'},
+    {d:'Month 2 · 7:49 pm',n:'Add to Workflow',t:'WF-10 owner alert, 2-hour callback',c:{w:'WF-10',b:0}},
+    {d:'Month 2 · 8:30 pm',n:'Goal Event',t:'Booked → exit',set:{stage:'Booked',wf:'WF-03 · Visit touches',tags:['-aud-ltn'],aud:['-Meta · Long Term Nurture']}}]},
+  {label:'Goes cold → sunset',steps:[
+    {d:'Day 0',n:'Pipeline Stage Changed',t:'Opportunity → Long Term Nurture',set:{stage:'Long Term Nurture',wf:'WF-09 · active',tags:['+aud-ltn'],aud:['+Meta · Long Term Nurture']}},
+    {d:'Day 3',n:'Send SMS + Send Email',t:'M01',c:{b:2}},
+    {d:'Day 14',n:'Send Email',t:'M02',c:{b:3}},
+    {d:'Day 104',n:'Email Events',t:'No opens in 90 days'},
+    {d:'Day 104',n:'Send Email',t:'RP · Should I stop emailing you?',c:{b:15}},
+    {d:'Day 118',n:'If / Else',t:'Still no open after 14 days'},
+    {d:'Day 118',n:'Add Contact Tag',t:'cln-sunset → stop',set:{tags:['+cln-sunset','-aud-ltn'],aud:['-Meta · Long Term Nurture'],wf:'— (exited)'},g:'Removing unengaged contacts protects deliverability for everyone else.'}]},
+  {label:'Full 12-month drip',steps:[
+    {d:'Day 0',n:'Pipeline Stage Changed',t:'Opportunity → Long Term Nurture',c:{b:0},set:{stage:'Long Term Nurture',wf:'WF-09 · active',tags:['+aud-ltn','+cln-path-new'],aud:['+Meta · Long Term Nurture']},g:'Copy rules apply to every send in this drip: one idea and one button, subject of 45 characters or less, a P.S., A/B subject judged on bookings.'},
+    {d:'Day 3',n:'Send SMS + Send Email',t:'M01 · Your quote is saved',c:{b:2},r:[C,Q,ST]},
+    {d:'Day 3 · 6:20 pm',n:'Customer Replied',t:'Inbound SMS',inb:'3'},
+    {d:'Day 3 · 6:20 pm',n:'Update Contact Field',t:'nurture_timing = Later → phase 2 cadence',set:{f:{nurture_timing:'Later'}}},
+    {d:'Day 14',n:'Send Email',t:'M02 · What if we miss a spot?',c:{b:3}},
+    {d:'Day 30',n:'Send Email',t:'M03 · Neighbors\' reviews',c:{b:4}},
+    {d:'Month 2',n:'Send Email',t:'M04 · Same clean, up to 20% less',c:{b:5}},
+    {d:'Month 3',n:'Send Email',t:'M05 · A 15-minute declutter plan',c:{b:6}},
+    {d:'Month 4',n:'Send Email',t:'M06 · 3 habits that keep your home clean',c:{b:7}},
+    {d:'Month 5',n:'Send Email',t:'M07 · 8 places dust hides',c:{b:8}},
+    {d:'Month 6',n:'Send Email + Send SMS',t:'M08 · A free [ADD-ON], until [DATE]',c:{b:9},r:[C,Q,CAP]},
+    {d:'Month 7.5',n:'If / Else',t:'Price-hold policy approved?',g:'M09 only sends if Dai approves a real price hold. Otherwise GHL skips to M10.'},
+    {d:'Month 7.5',n:'Send Email',t:'M09 · Your quoted price is held until [DATE]',c:{b:10}},
+    {d:'Month 9',n:'Send Email',t:'M10 · Your Saturday back',c:{b:11}},
+    {d:'Month 10.5',n:'Send Email',t:'M11 · Give $50, get $50',c:{b:12}},
+    {d:'Month 12',n:'Send Email',t:'M12 · Should we keep in touch?',c:{b:13}},
+    {d:'Month 12 · 9:14 am',n:'Email Events',t:'Clicked "Keep in touch"',set:{tags:['+cln-keep-in-touch']},g:'An explicit yes keeps her on holiday and seasonal sends; no click ends the drip with cln-sunset.'}]}
+ ]},
+'WF-10':{name:'Replies and outbound',sprint:1,live:'Live Nov 20',trigger:'Customer Replied (not a handled keyword) · Call Status',exit:'reply_outcome filled',kpi:'Replies called within 2 hours',contact:Object.assign({},MARIA,{stage:'Quote / Estimate Provided',f:{segment:'Residential'}}),
+ scen:[
+  {label:'Reply called in 2 h',steps:[
+    {d:'Tue · 11:32 am',n:'Customer Replied',t:'Inbound SMS',inb:'Do you bring your own supplies?',set:{wf:'WF-10 · active'}},
+    {d:'Tue · 11:32 am',n:'If / Else',t:'assigned_user is empty'},
+    {d:'Tue · 11:32 am',n:'Assign to User',t:'Round robin across the retention team → Ana',set:{f:{assigned_user:'Ana'}}},
+    {d:'Tue · 11:32 am',n:'Send Slack Message',t:'O3 · Reply alert',c:{b:0}},
+    {d:'Tue · 11:32 am',n:'Add Task',t:'Call within 2 hours',g:'Today the alert steps live inside workflows 4 and 6. One shared workflow means one format and one owner rule.'},
+    {d:'Tue · 12:10 pm',n:'Add Task',t:'Ana calls with O1',c:{b:2}},
+    {d:'Tue · 12:18 pm',n:'Update Contact Field',t:'reply_outcome = Booked',set:{f:{reply_outcome:'Booked'},stage:'Booked'},g:'reply_outcome feeds the dashboard: replies, call speed, bookings by owner (opportunity widgets group by Assignee).'}]},
+  {label:'No pickup → escalation',steps:[
+    {d:'Tue · 4:05 pm',n:'Customer Replied',t:'Inbound SMS',inb:'Is the price the same for a 3-bedroom?',set:{wf:'WF-10 · active',f:{assigned_user:'Ana'}}},
+    {d:'Tue · 4:05 pm',n:'Send Slack Message',t:'O3 · Reply alert',c:{b:0}},
+    {d:'Tue · 6:05 pm',n:'Wait',t:'2 hours · task still open'},
+    {d:'Tue · 6:05 pm',n:'Send Slack Message',t:'O3-esc · Escalate in thread',c:{b:1}},
+    {d:'Wed · 9:10 am',n:'Update Contact Field',t:'reply_outcome = Callback later',set:{f:{reply_outcome:'Callback later'}}}]},
+  {label:'Missed call',steps:[
+    {d:'Wed · 2:47 pm',n:'Call Status',t:'Outbound call not answered',set:{wf:'WF-10 · active'}},
+    {d:'Wed · 2:47 pm',n:'Send SMS',t:'O4 · Missed call follow-up',c:{b:4},r:[C,Q]}]},
+  {label:'Weekly win-back call list',steps:[
+    {d:'Mon · 9:00 am',n:'Add to Workflow',t:'From WF-06 day 60: cancelled 60+ days',set:{wf:'WF-10 · call list',stage:'Cancelled',f:{assigned_user:'Ana',cancel_date:'Feb 9'}}},
+    {d:'Mon · 9:00 am',n:'Add Task',t:'Weekly list: call with the O2 script',c:{b:3}},
+    {d:'Mon · 11:20 am',n:'Update Contact Field',t:'reply_outcome = Callback later',set:{f:{reply_outcome:'Callback later'}},g:'The outcome is reported by owner on the dashboard, next to the WF-06 emails.'}]}
+ ]},
+'WF-11':{name:'Retargeting',sprint:2,live:'Live Dec 11',trigger:'Contact Tag added aud-*',exit:'Tag removed or appointment booked',kpi:'Audience size, cost per booking by audience',contact:MARIA,
+ scen:[
+  {label:'Quote open → booked',steps:[
+    {d:'Day 0 · 2:15 pm',n:'Contact Tag',t:'aud-quote-open added (by WF-01)',set:{tags:['+aud-quote-open'],wf:'WF-11 · active',stage:'Quote / Estimate Provided'}},
+    {d:'Day 0 · 2:15 pm',n:'Add to Custom Audience (Facebook)',t:'Meta · Quote, not booked',set:{aud:['+Meta · Quote, not booked']},g:'Native GHL action. A Dynamic Smart List audience built in Ad Manager is the alternative if the account sync is limited (open decision 3).'},
+    {d:'Day 0 · 2:15 pm',n:'Add to Google Adwords',t:'Google customer match · same list',set:{aud:['+Google · Quote, not booked']}},
+    {d:'Day 1 → 3',n:'Meta ad',t:'Phase 1: reviews + reclean guarantee',ad:{a:'Not booked (combined)',h:'Your quote is still saved',d:'Missed a spot? We come back within 24 hours, free.',cta:'Book now'}},
+    {d:'Day 4 → 5',n:'Meta ad',t:'Phase 2: the free add-on',ad:{a:'Quote, not booked',h:'A free add-on with your clean',d:'Book this week and we add [ADD-ON] at no extra cost.',cta:'Book now'}},
+    {d:'Day 5',n:'Appointment Status',t:'Booked',set:{stage:'Booked'}},
+    {d:'Day 5',n:'Remove from Custom Audience (Facebook)',t:'Leave every aud-* list',set:{tags:['-aud-quote-open'],aud:['-Meta · Quote, not booked','-Google · Quote, not booked']},g:'Stop paying to advertise to a customer who already booked.'}]},
+  {label:'Cancelled plan',steps:[
+    {d:'Day 0',n:'Contact Tag',t:'aud-cancelled added (by WF-06)',set:{tags:['+aud-cancelled'],wf:'WF-11 · active',stage:'Cancelled'}},
+    {d:'Day 0',n:'Add to Custom Audience (Facebook)',t:'Meta · Cancelled',set:{aud:['+Meta · Cancelled']}},
+    {d:'Day 30 → 90',n:'Meta ad',t:'Come-back offer',ad:{a:'Cancelled',h:'Come back to [$X] off',d:'Your home details are saved. Book your first clean back.',cta:'Book now'}},
+    {d:'Day 91',n:'Remove from Custom Audience (Facebook)',t:'Day 91 → leave the audience',set:{tags:['-aud-cancelled'],aud:['-Meta · Cancelled']}}]},
+  {label:'One-time, no plan',steps:[
+    {d:'Day 8 after visit',n:'Contact Tag',t:'aud-one-time-no-plan added (by WF-04)',set:{tags:['+aud-one-time-no-plan'],wf:'WF-11 · active',stage:'Booked'}},
+    {d:'Day 8',n:'Add to Custom Audience (Facebook)',t:'Meta · One-time, no plan',set:{aud:['+Meta · One-time, no plan']}},
+    {d:'Day 8 → plan start',n:'Meta ad',t:'Plan upsell ad',ad:{a:'One-time, no plan',h:'Same clean, up to 20% less',d:'Weekly 20%, biweekly 15%, monthly 10% off every visit.',cta:'Pick a plan'}}]},
+  {label:'Other audiences',steps:[
+    {d:'WF-09 entry',n:'Contact Tag',t:'aud-ltn → Meta · Long Term Nurture',set:{tags:['+aud-ltn'],aud:['+Meta · Long Term Nurture'],wf:'WF-11 · active'}},
+    {d:'Ongoing',n:'Meta ad',t:'Seasonal reasons to book',ad:{a:'Long Term Nurture',h:'Your weekends, back',d:'Seasonal reasons to book: spring reset, back to school, hosting.',cta:'Book now'}},
+    {d:'WF-08 entry',n:'Contact Tag',t:'aud-lost → Meta · Not Now / Lost',set:{tags:['-aud-ltn','+aud-lost'],aud:['-Meta · Long Term Nurture','+Meta · Not Now / Lost']}},
+    {d:'Nov–Dec',n:'Meta ad',t:'Holidays, spring, moves',ad:{a:'Not Now / Lost',h:'Guests coming? We\'ve got it',d:'Book your holiday clean before the dates fill.',cta:'Book now'}},
+    {d:'WF-07 B5',n:'Contact Tag',t:'aud-past-60 → Meta · Past customers 60+ days',set:{tags:['-aud-lost','+aud-past-60'],aud:['-Meta · Not Now / Lost','+Meta · Past customers 60+ days']}},
+    {d:'Ongoing',n:'Meta ad',t:'Seasonal deep clean',ad:{a:'Past customers 60+ days',h:'Time for a refresh?',d:'Your home details are saved. Seasonal deep clean, pick a date.',cta:'Book now'}}]}
+ ]}
+};
+const SPRINT={1:'Sprint 1 · Quick wins',2:'Sprint 2 · Core build',3:'Sprint 3 · Expand',4:'Sprint 4 · Post-visit'};
+const MERGE={'contact.first_name':null,'contact.name':null,'location.name':'Cleenora','location.phone':'(555) 010-2040','user.name':'Ana','contact.quote_link':'cleenora.link/q/ML42','custom_values.booking_link':'cleenora.link/book','custom_values.addon_link':'cleenora.link/addons','appointment.date':'Sat, Dec 12','appointment.time_window':'9–11 am','appointment.eta':'9:40 am','appointment.manage_link':'cleenora.link/manage','appointment.next_date':'Sat, Dec 26','appointment.service':'Standard clean','contact.team_name':'Team Rosa','contact.city':'Frisco','contact.company_name':'Northside Dental','contact.plan_frequency':'biweekly','contact.plan_discount':'15%','contact.cancel_date':'Feb 9','contact.last_service':'your standard clean','contact.referral_link':'cleenora.link/r/maria','custom_values.offer_deadline':'Tue, Dec 8','custom_values.precleaning_instructions':'clear the counters and pick up toys','contact.contract_end_date':'Mar 31, 2027','contact.stage':'Quote / Estimate Provided','contact.plan_status':'Active','contact.phone':'(555) 014-2290','contact.address1':'1208 Elm St','contact.assigned_user':'Ana','message.body':'Can you do Saturday mornings? We have two dogs.'};
+
+const TRIG=['Pipeline Stage Changed','Appointment Status','Customer Replied','Contact Changed','Contact Tag','Trigger Link Clicked','Email Events','Custom Date Reminder','Call Status','Opportunity Status Changed'];
+const TEAM=['Send Slack Message','Add Task','Assign to User','Add Task + Send Email','Send SMS + Send Slack Message'];
+function kind(s){const n=s.n;
+ if(TRIG.includes(n))return'trig';if(n==='Wait')return'wait';if(n==='If / Else')return'cond';if(n==='Split')return'split';if(n==='Goal Event')return'goal';
+ if(TEAM.includes(n))return'team';if(/^Send|Drip Mode|Meta ad/.test(n))return'msg';return'act'}
+const ICON={trig:'T',wait:'W',cond:'IF',split:'S',goal:'G',team:'U',msg:'M',act:'A'};
+const TYPE={trig:'Trigger',wait:'Wait',cond:'Condition',split:'Split',goal:'Goal',team:'Team action',msg:'Message',act:'Action'};
+const NOTE={trig:'Trigger. GHL starts or moves the contact when this event happens; filters narrow it to the right segment.',wait:'Wait action. GHL holds the contact here, then continues at the set time or when the event happens.',cond:'If / Else action. Each branch is its own path in the builder, based on a field, tag or reply.',split:'Split action. Random paths by percentage; the contact stays on the same path.',goal:'Goal Event. One per workflow; reaching it ends the sequence wherever the contact is.',team:'Internal step. The customer does not see it; it puts a person on the contact at the right moment.',msg:'Message action using the approved copy. Merge fields fill from the contact record.',act:'Action. Updates the record so the next workflow, the ads and the dashboard all read the same data.'};
+
+let wfKey='WF-01',sc=0,cur=0,timer=null;
+const $=id=>document.getElementById(id);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function fill(text,contact){
+ let t=esc(text);const ph=[];
+ t=t.replace(/\{\{([a-z_.]+)\}\}/g,(m,k)=>{let v=MERGE[k];if(k==='contact.first_name')v=contact.first;if(k==='contact.name')v=contact.name;
+   return v?`<span class="mf" title="{{${k}}}">${esc(v)}</span>`:`<span class="mf">${m}</span>`});
+ t=t.replace(/\[([A-Z$][A-Z0-9 $&+\-.,]*)\]/g,m=>{ph.push(m);return'\u0001'+(ph.length-1)+'\u0002'});
+ t=t.replace(/\[([^\[\]\n]+)\]/g,(m,b)=>`<span class="cta">${b}</span>`);
+ t=t.replace(/\u0001(\d+)\u0002/g,(m,i)=>`<span class="phd" title="Set by Dai before launch">${ph[i]}</span>`);
+ return t}
+
+function messages(ref){
+ if(!ref)return[];
+ if(ref.note)return[{type:'note',body:ref.note}];
+ const blk=(COPY[ref.w||wfKey]||[])[ref.b];if(!blk)return[];
+ const ti=blk.title,hs=/SMS/.test(ti),he=/email/i.test(ti);
+ let ch=hs?'sms':he?'email':/Slack/.test(ti)?'slack':'script';
+ let subj='',pv='',hdr='';const out=[];
+ for(const [ty,tx] of blk.segs){
+  if(ty==='p'){
+   if(/^SMS/.test(tx)){ch='sms';hdr=tx;subj='';}
+   else if(/^Email|Subject/.test(tx)){ch='email';hdr=tx;const m=tx.match(/Subject(?: A)?(?: \([^)]*\))?:\s*([^·]+)/);subj=m?m[1].trim():'';const p=tx.match(/Preview:\s*(.+)$/);pv=p?p[1].trim():'';}
+   else if(/^First reminder|^Expiry reminder/.test(tx)){hdr=tx}
+   else out.push({type:'note',body:tx,hdr:'#note'});
+  }else if(ty==='q'){out.push({type:ch,subject:subj,preview:pv,hdr,body:tx,title:ti})}
+  else if(ty==='t'){const rows=tx.split('\n').map(r=>r.split('|').map(c=>c.trim()).filter(Boolean)).filter(r=>r.length);out.push({type:'table',rows:rows.slice(1),hdr:'',title:ti.split(' · ')[0].replace(/^R3$/,'Keyword auto-replies')})}
+ }
+ if(ref.only){const o=ref.only;const r=[];
+  for(const m of out){if(m.type==='table'){const row=m.rows.find(x=>x[0]===o);if(row)r.push({type:'sms',body:row[1],hdr:o})}else if(m.hdr&&m.hdr.startsWith(o))r.push(m)}
+  return r}
+ return out}
+
+function render(){
+ const W=WF[wfKey],S=W.scen[sc],steps=S.steps,N=steps.length,step=steps[cur],contact=W.contact;
+ // rail
+ document.querySelectorAll('.wfbtn').forEach(b=>b.classList.toggle('on',b.dataset.k===wfKey));
+ // head
+ $('wfhead').innerHTML=`<div class="row1"><h2>${wfKey} · ${esc(W.name)}</h2><span class="pill s${W.sprint}">${SPRINT[W.sprint]} · ${esc(W.live)}</span></div>
+ <div class="meta"><div><div class="k">Trigger</div><div class="v">${esc(W.trigger)}</div></div><div><div class="k">Exit</div><div class="v">${esc(W.exit)}</div></div><div><div class="k">Dashboard reads</div><div class="v">${esc(W.kpi)}</div></div></div>
+ ${W.koala?'<div class="banner"><b>Depends on the Booking Koala audit.</b> Appointments, completions and cancellations live in Booking Koala. This workflow runs only once the audit confirms those events reach GHL. Planned for Sprint 4 (Feb 2027) if the audit passes.</div>':''}
+ <div class="scen" role="group" aria-label="Scenarios"><span class="k">Scenario</span>${W.scen.map((s,i)=>`<button class="chip${i===sc?' on':''}" data-s="${i}">${esc(s.label)}</button>`).join('')}</div>`;
+ $('wfhead').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{stop();sc=+b.dataset.s;cur=0;render()});
+ // controls
+ $('clock').innerHTML=`<b>${esc(step.d)}</b> · step ${cur+1} of ${N}`;
+ $('prog').style.width=((cur+1)/N*100)+'%';
+ $('bPrev').disabled=cur===0;$('bNext').disabled=cur===N-1;
+ $('bPlay').textContent=timer?'❚❚ Pause':(cur===N-1?'↺ Replay':'▶ Play');
+ // canvas
+ let h=`<div class="cap"><span>Automation › Workflows › Cleenora › ${wfKey} ${esc(W.name)}</span><span>${esc(S.label)}</span></div>`;
+ steps.forEach((s,i)=>{const k=kind(s);
+  if(i)h+=`<div class="edge${i<=cur?' done':''}"></div>`;
+  h+=`<button class="node k-${k} ${i<cur?'done':i===cur?'cur':'future'}" data-i="${i}" aria-current="${i===cur}"><span class="ic">${i<cur?'✓':ICON[k]}</span><span class="ty">${esc(s.n)}</span><span class="tt">${esc(s.t)}</span><span class="dd">${esc(s.d)}</span></button>`});
+ $('canvas').innerHTML=h;
+ $('canvas').querySelectorAll('.node').forEach(b=>b.onclick=()=>{stop();cur=+b.dataset.i;render()});
+ const cn=$('canvas').querySelector('.node.cur');if(cn&&timer)cn.scrollIntoView({block:'nearest',behavior:'smooth'});
+ // explain
+ const k=kind(step);
+ $('explain').innerHTML=`<div class="k">What GHL does at this step · ${TYPE[k]}</div><p><b>${esc(step.n)}:</b> ${esc(step.t)}</p><p>${esc(step.g||NOTE[k])}</p>${step.r?`<div class="guards">${step.r.map(g=>`<span class="guard">✓ ${esc(g)}</span>`).join('')}</div>`:''}`;
+ // feed
+ let f='',count=0;
+ steps.slice(0,cur+1).forEach((s,i)=>{const isCur=i===cur;const cls=isCur?' style="outline:2px solid var(--sun);outline-offset:2px"':'';
+  if(s.inb){f+=`<div class="bub in"${cls}><span class="from">${esc(contact.first)} · ${esc(s.d)}</span>${esc(s.inb)}</div>`;count++}
+  if(s.ad){f+=`<div class="ad"${cls}><span class="h">Sponsored · Meta · audience ${esc(s.ad.a)}</span><div class="img">Cleenora</div><div class="t">${fill(s.ad.h,contact)}</div><div class="d">${fill(s.ad.d,contact)}</div><div class="row"><span>cleenora</span><b>${esc(s.ad.cta)}</b></div></div>`;count++}
+  for(const m of messages(s.c)){count++;
+   if(m.type==='sms')f+=`<div class="bub out"${cls}><span class="from">Cleenora · SMS · ${esc(s.d)}</span>${fill(m.body,contact)}</div>`;
+   else if(m.type==='email')f+=`<div class="mail"${cls}><div class="mh"><span class="f">From Cleenora · ${esc(s.d)}</span><span class="s">${fill(m.subject||'(subject)',contact)}</span>${m.preview?`<span class="pv">${fill(m.preview,contact)}</span>`:''}</div><div class="mb">${fill(m.body,contact)}</div></div>`;
+   else if(m.type==='slack')f+=`<div class="slack"${cls}><span class="h">Internal · Slack · ${esc(s.d)}</span>${fill(m.body,contact)}</div>`;
+   else if(m.type==='script')f+=`<div class="script"${cls}><span class="h">Internal · call script · ${esc(s.d)}</span>${fill(m.body,contact)}</div>`;
+   else if(m.type==='table')f+=`<div class="mail"${cls}><div class="mh"><span class="s">${esc(m.title)}</span></div><div class="mb" style="white-space:normal"><table class="kw">${m.rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${fill(r[1]||'',contact)}</td></tr>`).join('')}</table></div></div>`;
+   else if(isCur)f+=`<div class="note">${fill(m.body,contact)}</div>`;
+  }});
+ $('feed').innerHTML=f||`<div class="empty">Nothing sent yet. Press Play or Next to run ${esc(contact.first)} through the workflow.</div>`;
+ $('feedCount').textContent=count?count+' item'+(count>1?'s':''):'';
+ $('feed').scrollTop=$('feed').scrollHeight;
+ // record
+ const st=stateAt(W,steps,cur),pr=cur?stateAt(W,steps,cur-1):stateAt(W,[],-1);
+ const tagH=(arr,prev,cls)=>{const all=[...arr.map(t=>`<span class="tag ${cls}${prev.includes(t)?'':' new'}">${esc(t)}</span>`),...prev.filter(t=>!arr.includes(t)).map(t=>`<span class="tag ${cls} gone">${esc(t)}</span>`)];return all.length?all.join(''):'<span style="color:var(--muted)">none</span>'};
+ $('rec').innerHTML=`<div class="who"><div class="av">${esc(contact.first[0])}</div><div><b>${esc(contact.name)}</b><small>${esc(contact.sub)}</small></div></div>
+ <div class="grp"><div class="k">Opportunity stage</div><div class="stage"><b${st.stage!==pr.stage?' style="color:var(--brand-deep)"':''}>${esc(st.stage)}</b></div></div>
+ <div class="grp"><div class="k">Active workflow</div><div class="stage"><b${st.wf!==pr.wf?' style="color:var(--brand-deep)"':''}>${esc(st.wf)}</b></div></div>
+ <div class="grp"><div class="k">Tags</div><div class="tags">${tagH(st.tags,pr.tags,'')}</div></div>
+ <div class="grp"><div class="k">Ad audiences (WF-11)</div><div class="tags">${tagH(st.aud,pr.aud,'aud')}</div></div>
+ <div class="grp"><div class="k">Custom fields</div><dl class="fields">${Object.entries(st.f).map(([k,v])=>`<dt>${esc(k)}</dt><dd${pr.f[k]!==v?' class="new"':''}>${esc(v)}</dd>`).join('')}</dl></div>`;
+ try{history.replaceState(null,'','#'+wfKey.replace('-','').toLowerCase())}catch(e){}
+}
+function stateAt(W,steps,i){const c=W.contact;const s={stage:c.stage,wf:c.wf,tags:[...c.tags],aud:[...c.aud],f:{...c.f}};
+ for(let j=0;j<=i&&j<steps.length;j++){const x=steps[j].set;if(!x)continue;
+  if(x.stage)s.stage=x.stage;if(x.wf)s.wf=x.wf;if(x.f)Object.assign(s.f,x.f);
+  for(const [key,list] of [['tags',x.tags],['aud',x.aud]])(list||[]).forEach(t=>{const n=t.slice(1);if(t[0]==='+'){if(!s[key].includes(n))s[key].push(n)}else s[key]=s[key].filter(z=>z!==n)})}
+ return s}
+function stop(){if(timer){clearInterval(timer);timer=null}}
+function play(){const N=WF[wfKey].scen[sc].steps.length;if(timer){stop();render();return}
+ if(cur>=N-1)cur=0;timer=setInterval(()=>{if(cur>=WF[wfKey].scen[sc].steps.length-1){stop();render();return}cur++;render()},1700);render()}
+function pick(k){stop();wfKey=k;sc=0;cur=0;render()}
+(function init(){
+ const rail=$('rail');
+ Object.entries(WF).forEach(([k,w])=>{const b=document.createElement('button');b.className='wfbtn';b.dataset.k=k;b.innerHTML=`<span class="id">${k}</span><span class="nm">${esc(w.name)}</span><span class="sp">${esc(w.live)}</span>`;b.onclick=()=>pick(k);rail.appendChild(b)});
+ $('bNext').onclick=()=>{stop();cur=Math.min(cur+1,WF[wfKey].scen[sc].steps.length-1);render()};
+ $('bPrev').onclick=()=>{stop();cur=Math.max(cur-1,0);render()};
+ $('bReset').onclick=()=>{stop();cur=0;render()};
+ $('bPlay').onclick=play;
+ document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea'))return;if(e.key==='ArrowRight')$('bNext').click();if(e.key==='ArrowLeft')$('bPrev').click()});
+ const h=(location.hash||'').slice(1).toUpperCase().replace(/^WF(\d\d)$/,'WF-$1');if(WF[h])wfKey=h;
+ cur=4;render();
+})();
+
+</script>
+
+</body></html>

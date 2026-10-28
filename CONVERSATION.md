@@ -284,3 +284,85 @@ Request: a videogame-style AI-OFFICE tab (reference: Infuser Skilltree map) with
 
 ## 109. AI-OFFICE always visible (Oct 21)
 - On laptop widths (1280–1440 px) the AI-OFFICE tab was pushed off the right edge of the tab bar. The tab bar now wraps onto a second row on desktop, and AI-OFFICE also has its own button in the top switch (4C RETENTION | 4C PROSPECTING | AI-OFFICE). Direct link: #ai-office.
+
+## 110. D7 tab: Cleenora Workflow Simulator (Oct 22)
+- New 4C RETENTION tab "D7" (before AI-OFFICE, `#d7`) that embeds the attached "Cleenora Workflow Simulator (DRAFT)" unchanged: 11 GoHighLevel workflows (WF-01 Quote follow-up … WF-11 Retargeting) with scenarios, Play/Prev/Next, what the contact receives, and the live contact record.
+- Runs in its own frame (its styles and scripts stay separate from the page) and loads only when the tab is opened. Source file kept at d7/cleenora-workflow-simulator.html.
+
+## 111. Retention Point: preventive maintenance brief by brand (Oct 22)
+- Calculator → Retention Point now ends with "Preventive maintenance brief by brand" (from the PM Brand Briefs deck, link included): a brand switch for 5 Star Appliance Repair High-End, HVAC Alliance Expert, The 5 Star Plumbing, Electricians Service Team and 5 Star Air. Each shows slide 1 (service · our offer today · LA/OC competitor price · PM period · suggested PM option, with sources) and slide 2 (the offer, more profitable, more likely to book, ask, copy fix), plus a price-test calculator: bookings change = (new ÷ old)^E, preset to each brief's numbers (AR 249→299 at −0.4: −7% bookings / +12% revenue; Air 179→249 at −0.6: +14%; EL 135→99 implied −1.39: +54% bookings).
+- "How the suggestions were built" (market, clock, elasticity). Competitor prices checked Oct 22, 2026; all prices pending Ops margin approval. Text kept in docs/PM-BRAND-BRIEFS.txt.
+
+## 112. 4C Prospecting → Lead to Loyalty (Oct 23)
+- New sidebar item "Lead to Loyalty": full lead-to-retention strategy (7 stages, owners, KPIs, plays, links into the tabs that run them), a channel × stage map, principles, and an editable 12-month P&L (revenue, gross profit, acquisition, retention, contribution, CAC, LTV:CAC, payback). Assumptions are labeled; replace with actuals. See docs/PROSPECTING.md.
+
+## 113. Tech Assignment (dispatch source) + AI-agent managed
+Request: "as a dispatch source replicate this system add as the tech assignment. The whole project should be fully managed by AI-Agents." (reference: job-assignment-efficiency.vercel.app, CSR SOP)
+- New 4C RETENTION tab **Tech Assignment** (#tech-assignment), sidebar modeled on the Tower dispatch app: Dispatch Board, Coverage Finder, Daily Entry, Dispatcher KPIs, Dispatch Groups, Technician Payments, Outbound, Team Schedule, CSR SOP, AI control.
+- Dispatch Board: the DISPATCH agent scores technicians (tier, HE/LE, skill, free capacity, ZIP coverage), explains every pick, and flags for a DSR: after 12 PM LA no same-day; outside coverage → OOSA request + tag; all at capacity → DSR decides. Simulated LA hour selector. Sample roster and jobs only.
+- KPIs use the floor weights: revenue 35% (full share at 85% of goal), response reliability 25% (99% within 120 working seconds), job efficiency 20% (98%), group ADP 20%; ADL bands A/B/C.
+- AI control: function → agent → human approval point for the whole ecosystem.
+- AI-OFFICE: 6th agent **Max · DISPATCH** (DS-06, floor L2, 6 skills, 4 quests, interactions); tower now 6 floors.
+
+## 114. Tech Assignment in 4C Prospecting
+Request: "add Tech Assignment to 4C PROSPECTING project"
+- New sidebar item **Tech Assignment** in 4C Prospecting (after Pipeline): prospect-to-dispatch header (Lead captured → AI qualifies → Job booked → DISPATCH assigns → First job done → 4C Retention) plus the full Tech Assignment workspaces as a horizontal sub-nav.
+- One shared module and state (window.__ta): dispatch runs and KPI edits show in both 4C Prospecting and 4C Retention.
+
+## 115. Tech Assignment and AI-OFFICE removed from the 4C RETENTION tab bar
+Request: "remove them both from 4C RETENTION project, leave AI-OFFICE on AI-OFFICE project only and tech assignment only on 4C PROSPECTING"
+- 4C RETENTION tabs no longer show Tech Assignment or AI-OFFICE.
+- AI-OFFICE is its own project from the top switch: hides the Retention tab bar and highlights only AI-OFFICE; 4C RETENTION returns to the Calculator.
+- Tech Assignment lives only in 4C Prospecting; #tech-assignment opens it there.
+
+## 116. Appliance PM Care Visit emails on Touchpoint 8 (PM Notice)
+Request: add Care_Visit_Email_Previews.html to Appliance preventive maintenance communication on Touchpoint 8: PM Notice.
+- Transactional Workflow → Touchpoint 8 now has two groups: Electrical (existing) and **Appliance Preventive Maintenance · HE refrigerator Care Visit (5 Star Appliance Repair) · $249 vs $299 test**.
+- 12 emails (6 steps × Group A $249 / SZCARE249 and Group B $299 / SZCARE299): Day 0 Status, Day 2 What we check, Day 7 Flow A story / Flow B Q&A, Day 20 Reminder, Day 22 Last reminder.
+- HTML stored in data/care-visit-emails.json (loaded on demand) and emails/care-visit/*.html; fixed 640px emails scale to fit the preview.
+
+## 117. Onboarding video + SOP
+Request: "create an onboarding video and SOP written on how to find all the information here"
+- New **START HERE** button in the top bar (#start): 3-minute tour video (video/onboarding.mp4, 1280×720, captions on screen), the 6-step SOP, a searchable "Where do I find…" table with 34 Go → shortcuts, house rules and a map of the ecosystem.
+- Same SOP as docs/ONBOARDING-SOP.md.
+
+## 118. Onboarding video with sound, introduced as the Retention CRM
+Request: "put sound on, introduce as retention CRM"
+- Re-recorded the tour with a voice-over (26 narrated scenes, offline Piper TTS voice en_US-lessac), timed scene by scene; title card "4C Retention CRM". Length 3:52. MP4 (H.264 + AAC) and WebM (VP9 + Opus).
+- Start Here hero now reads "How to find everything in the 4C Retention CRM". Narration script in docs/ONBOARDING-SOP.md and docs/ONBOARDING-NARRATION.json.
+
+## 119. SMART TOOLS tab (SMS · Email · Outbound Script · Retargeting)
+Request: "create a tab call SMART TOOLS, add as the subtab SMS, Email, Outbound Script and Retargeting"
+- New 4C RETENTION tab **SMART TOOLS** (#smart-tools), sidebar with four builders sharing trade, brand, phone, offer, end date and link (7 trades, 8 goals, 4 audiences).
+- SMS: 3 drafts per trade/goal, editable final text, live segment counter (GSM-7 vs Unicode), phone preview, checks: brand first, STOP line, segments, branded link, spam words, caps, consent + quiet hours, tokens.
+- Email: 3 subject + preheader options with scores, branded HTML email (preview, copy, download), CAN-SPAM and deliverability checks (unsubscribe, address, real end date, one CTA, alt text, 102 KB clip).
+- Outbound Script: opening, discovery questions by trade, value, offer, two-slot close, voicemail, follow-up text, objection handling, 13 call outcomes, read time; checks for DNC, calling hours, AI-voice consent/disclosure, CA recording notice, same-day rule; download .txt.
+- Retargeting: Meta, Google Search RSA, Display/PMax, YouTube; 6 audiences with inclusions/exclusions/window/cap; ad copy with per-field character counters; UTM link; ad preview; policy checks.
+- Added to the START HERE finder and map.
+
+## 120. SMART TOOLS: SEO, GMB, Google Ads, LSA, Landing Pages, Blogs, Paid Media
+Request: "Add other marketing channels such as SEO, GMB, Google Ads, LSA, Landing Pages, Blogs, Paid Media"
+- Sidebar now grouped: Messaging (SMS, Email, Outbound Script) and Acquisition (SEO, GMB, Google Ads, LSA, Landing Pages, Blogs, Paid Media, Retargeting). City/market field added.
+- SEO: keyword cluster (service + city, near me, emergency, cost, HE brands), title/meta/H1/URL with counters, FAQ, LocalBusiness + Service + FAQPage JSON-LD, Google preview, internal links.
+- GMB: offer/update/event posts (no phone in text, CTA button + UTM), review replies for 1–5 stars, Q&A seeds, profile preview.
+- Google Ads: 4 ad groups with match types, 20 shared negatives, 15 headlines / 4 descriptions (fit to 30/90), sitelinks, callouts, preview, tracking checks.
+- LSA: job types per trade, service area, profile bio, budget → leads → bookings → revenue/ROAS (editable assumptions), ranking and dispute rules.
+- Landing Pages: message-matched page per traffic source with 4-field form, unchecked TCPA consent, click-to-call; live preview + HTML download.
+- Blogs: 6 seasonal topics per trade, brief (title, keyword, meta, outline, CTA), E-E-A-T checks, download.
+- Paid Media: budget split across 6 channels with editable share / cost per lead / booking rate → leads, bookings, cost per booking, ROAS; 70/20/10 and offline-conversion checks. All rates are labeled planning assumptions.
+- 7 new rows in the START HERE finder.
+
+## 121. SMS · AI smart reply after YES (upsell + cross-book)
+Request: AI smart communication on SMS with as many custom fields as possible from the home address, after customers reply YES to promos with the CTA "To book your appointment reply YES"; do upsell and cross-book.
+- SMART TOOLS › SMS now has two modes: Promo composer (new Draft 4 ends with "To book your appointment reply YES.") and **AI smart reply · after YES**.
+- 82 custom fields in 9 groups (contact & consent, property from the address, home systems, appliances on file, service history, membership, promo, scheduling from Tech Assignment, context), searchable, CSV download.
+- Clickable conversation: YES → virtual-assistant disclosure + 2 real slots → booked + 1 upsell (ADD) → 1 cross-book (BOOK) → Passport pitch (non-members). Branches: price question, safety words → live call, STOP, free text → human, outside coverage → OOSA.
+- Offer scoring table shows every candidate, its score, the fields behind it and how the AI phrases it (data picks the offer; the message never recites home value or ownership).
+- 3 fictional sample homes (Woodland Hills HE, Westside condo member, Northridge 1962 with Federal Pacific panel); Customer.io/Liquid template.
+
+## 122. Automated pipeline on top of all channels + outbound follow-up list after SMS
+Request: "after SMS create a list for outbound follow up. create as a pipeline the order. Add on top of all channels a pipeline and make all the communication fully automated with smart channels"
+- SMART TOOLS opens on **Pipeline · automated**: 10 stages in order (New lead → Promo SMS → Replied YES/AI reply → Email follow-up → Outbound follow-up → Retargeting → Booked → dispatch → Upsell/cross-book → Nurture → Suppressed), each with its smart channel, owning AI agent, start rule and next-step rule, and an Auto / Approve switch.
+- "Run automation" plays 12 days for 16 fictional customers; KPIs (booked, revenue at $479, booked by channel, automated actions vs human calls) and an automation log update live.
+- A pipeline strip sits on top of every channel tool, highlighting where that tool sits in the flow.
+- SMS › **Outbound follow-up list**: everyone the SMS did not convert, ranked by a 0–100 priority score, as a call pipeline (Call queue → Attempt 1 → Attempt 2 → Callback → Booked / Not interested / Retargeting / DNC). Outcome buttons move cards automatically (voicemail → auto-text with consent; 3 attempts → retargeting; DNC → suppressed everywhere); drag and drop; "Call next"; Script › opens the Outbound Script prefilled; CSV export.

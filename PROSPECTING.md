@@ -39,3 +39,10 @@ Sidebar → B2C Database. Tabs: Search (filters: location/served ZIPs, property,
 - Intent score = Σ weight × 0.5^(days ÷ 30), capped at 100 (web visit 35, permit 25, listed 25, new homeowner 25, weather 15, equipment age 15 no decay, in-market 10). Weights to be refit on booked jobs vs holdout.
 - Purchased data channels: direct mail and addressable/ad match yes; email only with broker opt-in proof (ESP terms); manual calls only after DNC scrub; no SMS or AI voice without consent. Responses come back as inbound leads (consent captured on the landing page).
 - Not purchased: race, ethnicity, religion, health, sexual orientation, political data. Sample records are fictional.
+
+## Lead to Loyalty
+Sidebar → Lead to Loyalty: one strategy from first ad to referral.
+- Seven stages with goal, owner agent, north-star KPI, plays and a link to the tab that runs them: Attract (Diego · MAESTRO) → Capture (Nazar · SCOUT) → Convert (Victor · ARCHITECT + Joy · FRONT DESK) → Deliver → Expand → Retain (MK · COMMANDER) → Advocate; Retain and Advocate loop back to Attract.
+- Channel map: 11 channels × 7 stages (search/LSA, paid social, direct mail/print, partners, website/LPs, AI SMS, email, phone/CSR + Live Coach, in-app, retargeting, reviews/referral) with the play each runs.
+- Principles: one profile, consent first, stop on success, measure lift with 10% holdouts.
+- 12-month P&L model with 16 editable inputs (only revenue per job is sourced: $479, 4C Calculator 2026 Jan–Aug; everything else is a labeled assumption): revenue from new jobs, repeat jobs and Passport; gross profit; acquisition media, comms, retention incentives, platform/AI tools; contribution; CAC, 12-month value per customer, LTV:CAC, members, payback; monthly chart and table.
