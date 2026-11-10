@@ -1,5 +1,9 @@
 # 4C Retention Ecosystem
 
+> **New tabs in 4C RETENTION:** **New Workflow** (Customer.io email library: job lifecycle + 8 cross-sell emails, `emails/email-library.html`, deep link `#new-workflow`) and **Outbound OS** (the console embedded, deep link `#outbound-os`).
+>
+> **New: [OutboundOS](OutboundOS.html)**, the 4C call center console: benchmark, goals, live funnel, pipeline, Live Coach, Customer 360, Cash Grab, CSR DNA, Gantt and a 3-minute SOP video. Full docs: [`docs/OUTBOUNDOS.md`](docs/OUTBOUNDOS.md). On Vercel: `/OutboundOS` or `/outboundos`.
+
 Two parts, switched at the top of the page: **4C RETENTION** (the Membership Communication Library and everything built so far) and **4C PROSPECTING** (B2C email + SMS, AI-led; see docs/PROSPECTING.md).
 
 # Q4 4C AI Solutions — Membership Communication Library
