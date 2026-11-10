@@ -400,3 +400,271 @@ Request: "create an AI gantt chart tab with all the activities, create an AI-Age
 - AI-FIRST › **AI GANTT** (#ai-gantt): 26 Q4 activities (Oct 5 → Jan 3, 13 weeks) grouped by 6 positions, each run by its AI agent: Ava · COMMANDER (MK), Leo · ARCHITECT (Victor), Mia · MAESTRO (Diego), Sam · SCOUT (Nazar), Joy · FRONT DESK (CSR team), Max · DISPATCH (Dispatch team). Bars show progress and status (in progress, done, needs input, waiting on a dependency, not started) with a Today line.
 - Task detail: inputs, outputs, dependencies, your answers and the agent's check-ins. Run agents / +1 day / Back to today; agents check in every simulated morning.
 - Bottom dock on every page: a small figure per agent with live status; click for the current task, inputs/outputs, recent check-ins and an "Ask" box. When an agent hits a decision point it raises a notification toast and a badge; answer by prompt and the agent resumes (answers kept in this browser).
+
+## 128. Cross-Booking Playbook added to the cross-booking strategy
+Request: add home_services_retention_cross_booking_playbook.md to the cross-booking strategy.
+- AI-FIRST › SMART TOOLS › Messaging › **Cross-Booking Playbook** (10 sections): Process (5 steps, assumptions, management sign-off checklist, Value Equation), Inbound script, Outbound script, By department (original → additional selector with openers, discovery prompts, safety/claims rules, pairings table), Offers (5 concepts + two-option close), Objections, CRM fields & dispositions, Scorecard (editable calculator + KPI formulas), QA coaching (8-point call scorer), Launch checklist.
+- Full source saved as docs/CROSS-BOOKING-PLAYBOOK.md; START HERE finder row added.
+
+## 129. New file OutboundOS (Master + SmartTool)
+Request: new file "OutboundOS": the 2027 Outbound OS diagram as the Master tab; a SmartTool tab with Live Coach for Cross-booking and Outbound script, copying "CRM · Customer 360 · Live call · Live Coach · AI that helps overcome objections, fed by CRM + intent data".
+- OutboundOS.html (standalone). Master: Home Alliance version of the board: 4 inputs (household profiling, promo SMS + email with Reply-YES, follow-ups, calls), 9-stage source of truth, 6-table ledger, the hands, 11 agents in 4 groups (home-score, reply-capture, reply-gate, promote, ledger-write, reply-draft, follow-up, slack-ping, call-prep, talk-back, digest), agent details and a "run one household" animation.
+- SmartTool: the Live Coach console (header, Fed live by chips, customer banner, sentiment, live coach card, offer ladder, availability, playbook steps, live transcript with highlighted objections, action buttons, Intent/Offers/Approach/Home/Points/Area panel, optional browser voice). Two scripted calls from the Cross-Booking Playbook: inbound cross-booking (Sub-Zero → HVAC) and outbound retention (lapsed customer → dryer vent estimate).
+
+## 130. OutboundOS SmartTool: support channels
+Request: "add other support channels to smart tools"
+- OutboundOS › SmartTool now has 6 support-channel Live Coach sessions next to Cross-booking and Outbound script: SMS (two-way after YES), AI chat (website), AI voice (after hours, safety screen), Email (AI draft, CSR approves), Missed-call text-back, Voicemail + text. Each has its own customer, offer ladder, availability, playbook steps, intents, coach cards and compliance notes; header crumb names the channel.
+
+## 131. Cross-Booking Playbook in OutboundOS
+Request: add the cross-booking playbook (same file as #128) to the cross-booking.
+- OutboundOS › SmartTool: new "Cross-booking playbook" button next to the Live Coach calls; shows the full playbook in 17 sections (overview, assumptions, 5-step process, inbound/outbound scripts, service scripts, pairings, offers, objections, two-option close, discovery prompts, CRM fields, scorecard, QA, Value Equation, launch checklist with saved checkboxes, final rule).
+
+## 132. OutboundOS Master animated
+Request: "make master animated"
+- Staggered entrance, flowing dashed wires (inputs → groups, group → group, side panels → groups), a glowing packet that travels between agents, agents lighting up per step and showing reading/deciding/writing, stages and inputs highlighting live.
+- Auto-plays a continuous mix of households (YES → booked, follow-up → booked, STOP → suppressed, no fit → ledger only) with live counters (households, YES, booked, human approvals, suppressed); Pause/Play and Restart; stats count up; respects reduced motion.
+
+## 133. OutboundOS: more user friendly
+Request: "make it more user friendly"
+- Master: 3-step "how it works" strip; plain-English name on every agent card (e.g. "Scores each home" above {home-score}); a sticky "now happening" bar (customer, outcome, step x of y with progress dots) with Pause/Play, Step ›, Speed (slow/normal/fast) and Restart; color legend + tip; agent details open just under the bar with a close button; larger small text.
+- SmartTool: one-line guide and a "Next line ›" button on Live Coach to skip ahead.
+
+## 134. Step-by-step guide on top of OutboundOS
+Request: "add the SOP as a video or gadget showing step by step on top of the OutboundOS"
+- "▶ How to use · step-by-step guide" button in the top bar (and a first-visit "New here?" prompt): a 20-step spotlight tour over the live page, following the SOP (Master: tabs, 3 steps, Now happening bar, controls, inputs, agent details, groups, stages, counters; SmartTool: sessions, banner, coach card colors, offer ladder, transcript, controls, context panel, actions, playbook; the rules). Back/Next, ▶ Play as video (auto-advances every 7 s), arrow keys, Esc; #guide link opens it.
+
+## 135. Cash Grab gamification tab (OutboundOS)
+Request: gamification tab for CSRs who book and cross-book more: Black Friday Cash Grab, ₱100 per qualified cross-booking (~$1.58), paid daily, Nov 1–30, ~$50/week from Michele's 4C budget (engagement money as backup), milestones 5/10/15/20/30, no limit.
+- OutboundOS › Cash Grab tab: KPIs (today, month to date, this week vs budget, leader, CSRs earning), leaderboard with medals, badges and next milestone, a "Log a cross-booking" form that applies the rules (different department, confirmed in Tech Assignment, customer approved, no duplicate job #), today's instant payout table (₱ and USD), budget tracker with weekly projection and over-budget warning, milestone tiers, copy-ready supervisor announcement, rules, day navigation and "Simulate a day". Sample CSRs; entries saved in the browser. Added to the step-by-step guide.
+
+## 136. Gamification ideas (Cash Grab tab)
+Request: "make ideas of gamification to stimulate more bookings"
+- Cash Grab › "More gamification ideas to drive bookings": 15 selectable idea cards (Power Hour 2×, daily streak, cross-booking bingo, spin the wheel, shift vs shift, show-up bonus, quality multiplier, most improved, Passport sign-up bonus, Black Friday triple, monthly raffle, levels and titles, daily shout-out, mystery booking, coach a teammate), each with mechanic, reward, est. $/week, what it drives, effort and a guardrail; filter by type; a plan table totals the selected ideas plus the base contest against the $50 weekly budget. Costs are labeled estimates.
+
+## 137. OutboundOS: home-age call (ATTOM) + live commission potential
+Request: use the Home Maintenance by Home Age sheet; add a timeline, inbound call catching via ATTOM, an AI offer map, a cross-booking strategy and on-screen commission potential while the call runs.
+Built: SmartTool button "🏠 Home-age call (ATTOM)". It shows:
+- caller ID → ATTOM property card (year built/renovated, age band, renovation warning);
+- a service-life timeline (paint, water heater, AC, appliances, furnace, panel) with a "this home" marker;
+- an offer map for all 8 departments from the sheet, with flags (hause typo, EL $95 to Nov 14, 4C AR until ops stops, painting validity) and the do-not-use list;
+- a cross-booking plan (request → upsell → one cross-book → follow-ups);
+- a scripted live call with coach notes;
+- a live commission meter (secured vs on the table).
+Commission rate, tickets and HVAC spiff are editable placeholders; the ₱100 (~$1.58) Cash Grab rate is real.
+
+## 138. OutboundOS: daily holiday contests + CSR DNA tab
+Request: one contest per day tied to holidays, with the extra bookings needed and a different reward each day, shown as you step through days; plus a CSR DNA tab with a life-goals questionnaire that suggests gamification and prizes.
+Built:
+- Cash Grab gets a daily contest card under the hero: 30 November contests (PH/US holidays, observances, team themes), each with its own mechanic and reward, and a team goal = average daily cross-bookings so far + that day's extra. It also shows a progress bar, the maximum bonus cost per day, and a scrollable 30-day strip. Total bonus cost at most ₱22,700 (~$359; ~$84/week), flagged as above the $50/week budget.
+- New tab CSR DNA 🧬:
+  - 9-question optional questionnaire (goal, motivators, competition style, prizes, recognition, rhythm, interests, power-hour time, dream);
+  - profile with archetype (8 types), driver bars, matched gamification, prize ideas with ₱ ranges, and best contest days;
+  - Team DNA mix and cards;
+  - copy-questionnaire button.
+  - 3 sample profiles; saved in browser localStorage.
+
+## 139. OutboundOS: Customer 360 screen pop in SmartTool
+Request: pull all the customer's previous information from every channel (reference: the CRM customer drawer), open it on the CSR screen, add it to SmartTool.
+Built: a right-side Customer 360 drawer, modelled on the CRM drawer. It contains:
+- match line, contact details, a do-not-contact flag, score ring and tier;
+- an AI brief to read before speaking;
+- cancellations (internal mistakes marked);
+- badges: subscribed, membership, built year, property age, home value marked internal-only;
+- counts: sales / visits / booked / canceled / lost / open / revenue, plus a summary line;
+- a customer journey strip;
+- tabs: Jobs, Communications (filter by call, SMS, email, AI chat, AI voice, push, direct mail, voicemail), Score log, Replies & reach (with sources checked).
+It opens automatically when a Home-age call starts (switches with the caller), from a "👤 Customer 360" button in SmartTool and in the Live Coach controls, and from an edge tab. On wide screens it pushes content left. 4 fictional sample customers, one marked do-not-contact. No real customer data from the screenshot was used.
+
+## 140. OutboundOS: Objection points call (touchpoints → points → prizes)
+Request: a sample call where every time the CSR uses an objection-handling touchpoint it shows on screen, with a side table of accumulated points that turn into prizes.
+Built: SmartTool button "🛡️ Objection points call".
+- A 15-line sample call with four objections (price/trust, timing, "don't need it", "talk to my partner"), tracked as chips: live → ✓ handled.
+- Each CSR touchpoint is highlighted in the transcript and pops a toast. Point values: Acknowledge +5, Clarifying question +5, Explain value +10, Approved offer +10, Two options +5, Confirm next step +10, Respect the answer +5, Booked after objection +25. The sample call earns 145 pts.
+- Side table: per-touchpoint count and points, total, and penalties listed (pressure −10, unapproved discount −15, ignoring a no −10).
+- Prize bank per CSR (localStorage): bank the call's points, progress to the next prize, and a redeemable ladder: 250 badge/shout-out, 500 coffee, 1,000 early out, 1,500 ₱300 GCash, 2,500 movie for two, 4,000 ₱1,000 GCash or first shift pick.
+- Removed the Customer 360 edge tab (it overlapped content); the button stays.
+
+## 141. OutboundOS: Top CSR performers leaderboard
+Request: add a top CSR agents performers leaderboard.
+Built: in the Objection points call view, a "Top CSR performers" card:
+- metric toggle (Overall, Objection points, Cross-bookings, Save rate);
+- podium for the top 3;
+- a ranked table of all 8 CSRs (rank change ▲▼, overall, points, cross-bookings from Cash Grab, calls, objections handled %, save rate, next prize);
+- the current CSR highlighted.
+Overall = points ÷ 20 + cross-bookings × 5 + save rate %. Banking a call updates that CSR's points, calls, objections and saves. Sample stats.
+
+## 142. OutboundOS Master: call-center metrics + best-offer map
+Request: on Master add inbound calls, bookings, cross-bookings, cross-booking/booking rate, calls→cross-booking ratio, plus anything else needed; map the best offers by customer reception.
+Built, at the top of Master, with a period toggle (Today so far / Last 7 days / Last 30 days):
+- 15 KPI tiles, each with change vs the prior period and a 14–30 day sparkline; the Cash Grab start (Nov 1) is marked. KPIs: inbound calls, answer rate, bookings, booking rate, cross-bookings, cross-booking rate (target 15%), calls → cross-booking, offer rate, offer acceptance, cross-bookings kept, cross-booking revenue, avg cross-book ticket, missed calls recovered, avg handle time, Cash Grab payout.
+- Funnel: inbound → answered → booked → offered → cross-booked → kept, with a leak insight.
+- Pairings table (offered / accepted / rate).
+- "Best offers by customer reception": 17 offers from the home-age sheet, ranked by reception (acceptance × kept) or revenue per pitch, tagged Lead with / Keep / Test / Big ticket / Fix or retire, with sheet flags.
+- AI offer map: lead offers, biggest $ per pitch, fix or retire, best first offer per home-age band, deadlines.
+- Heatmap of offer × home-age band acceptance.
+All sample numbers; connect call system + CRM offer codes to go live.
+
+## 143. OutboundOS: one design system for every tab
+Request: keep all tabs in the same design.
+Done: a "Unified design" stylesheet block at the end of the CSS.
+- One dark surface system (bg / panel / panel2 / line) and one hero style across Master, SmartTool, Cash Grab and CSR DNA.
+- Mint for actions, active states and success; amber only for money, points and rewards; red for stop / do-not-contact / risk.
+- Converted the light Live Coach console, transcripts, coach cards, Customer 360 drawer and guide card to the dark system.
+- Primary buttons are mint everywhere; the Live Coach title moved from serif to the display font.
+- Fixed: `[hidden]` was overridden by `display:flex`, so the Objection points view showed under other SmartTool sessions.
+
+## 144. OutboundOS Master: LIVE FUNNEL + Pipeline
+Request: on Master add a LIVE FUNNEL with all stages and how many people are active in each, animated; then a pipeline.
+Built, after the call-center metrics:
+- LIVE FUNNEL: the 9 stages from the source of truth. The main path is a tapered funnel (Profiled → Contacted → Replied YES → Booked → Won), each stage showing active count, % of previous and average time in stage. Loops (Follow-up, Nurture) and exits (Not a fit, Lost — counted today) sit on the right.
+  - Simulated movement every second: dots fly between stages (mint forward, amber booked/won, red exits), counts bump, and a "Moving now" feed lists the latest stage changes by household ID.
+  - Pause/Play; it runs only while Master is visible.
+- Pipeline: summary (open pipeline $, weighted by stage win rate, booked, won today), a department filter, and a 6-column board (Contacted, Replied YES, Follow-up, Nurture, Booked, Won). Cards show household, service, city, value, owner, time in stage and next action; the newest first, highlighted as they arrive.
+
+## 145. OutboundOS SmartTool: customer points system + In-app channel
+Request: add the point system and the In-app session from the earlier 4C AI app, in the new design.
+Built:
+- Home Alliance Points in Live Coach (Points tab, every scenario):
+  - balance card with $ value (100 pts = $1; points cover up to 50% of a job);
+  - how points are earned: maintenance visit +500, second trade on one visit +750, complete home profile +1,000, refer a neighbor who books +2,500;
+  - an "On this call" log of earned/applied points.
+  - The "⭐ Apply points" action applies up to 2,500 pts (or says there are none).
+- New support channel "In-app" (Persona 4, Jordan K., 1962 LA home, Value plan, 3,250 pts):
+  - a phone mockup with Passport offers (tiles tick when added), leak-sensor alert, points card, bookings and home sensors;
+  - an in-app events stream (session, sensor events, customer taps, AI replies);
+  - coach steps Detect → Help → Recommend → Points → Confirm.
+  - The script: leak → shut-off valve + same-day plumber (approved 25+ yr no service call fee) → fridge 44°F add-on (+750) → HVAC tune-up → 2,500 pts for $25 off → confirmed (+500). It ends at 2,000 pts.
+- Customer 360 shows a points badge.
+
+## 146. OutboundOS Master: removed the animated agent board
+Request: remove the part under the pipeline (3-step strip, "now happening" bar, inputs, source of truth/ledger, 11 agent cards, counters and stats).
+Done:
+- Removed that markup, the wires overlay and the master animation engine (`__masterStart` is now a no-op), plus the 8 guide steps that pointed at it.
+- Updated the welcome/tabs guide text and the Master subtitle.
+- Master is now: header → call center metrics + best-offer map → LIVE FUNNEL → Pipeline.
+A copy of the file before removal is kept outside the repo.
+
+## 147. CSR DNA: daily progress on top
+Request: add daily progress at the top of CSR DNA.
+Built: a "Daily progress" section above the CSR DNA hero.
+- Today's contest (from Cash Grab's daily contests) with its reward, and a team bar of cross-bookings today vs today's goal.
+- One card per CSR:
+  - a progress ring for today vs a personal goal (today's team goal ÷ 8);
+  - today and month cross-bookings with the next tier;
+  - objection points banked and pesos earned;
+  - a nudge matched to their DNA type (e.g. Competitor: "3 more to pass Jomar"; Learner: "beat your best day"), or a prompt to fill in the questionnaire.
+It refreshes when the tab opens and when a DNA profile is saved.
+
+## 148. OutboundOS Master: benchmark + track toward goal
+Request: add a benchmark of the main metrics at the top of Master, and track toward goal at the top and on the main metrics.
+Built, at the top of Master:
+- Benchmark (last 30 days): us vs our goal vs industry for answer rate, booking rate, cross-booking rate, offer rate, offer acceptance and missed-call recovery, as bullet bars. Industry numbers:
+  - Invoca Home Services Benchmarks 2026: 52% of inbound calls answered; ~45% of businesses ask to book.
+  - ServiceTitan, June 2022: 42% average call-booking rate.
+  No public benchmark exists for cross-booking metrics, so those compare with our goal. Sources are linked and definitions differ.
+- Track toward goal (November MTD): bookings, cross-bookings and cross-booking revenue with a progress bar, an expected-by-today marker, projected month-end, status and needed per day. Rate goals (cross-booking rate, calls→cross-booking, answer rate, offer rate, missed-call recovery) show the gap to goal. Goals are editable and saved in the browser.
+- Each main KPI tile shows a % of goal bar for the selected period.
+
+## 149. OutboundOS: Pip, the AI agent gadget
+Request: add a cute, animated AI agent gadget.
+Built: "Pip", an original mint robot fixed at the bottom left on every tab.
+- Animation: it floats, blinks, has a glowing antenna and a beating chest light, waves on hover or when it has a tip, its mouth moves while it talks, and it jumps with confetti on wins (points banked, prize redeemed, cross-booking logged). Animation is disabled for reduced-motion users.
+- Chat panel: tab-aware quick chips plus a free-text box. Pip answers from what is on the page right now: goals vs plan, the benchmark, best offers (including by home age), today's contest, top performers, the live funnel, pipeline value, how points work and the cross-booking approach. It can also open Customer 360 or start the guide.
+- On each tab, a proactive tip bubble appears with a notification dot (e.g. "Heads up: Bookings is slightly behind. Need 141/day").
+
+## 150. OutboundOS: Gantt tab with implementation sprints
+Request: add a tab called Gantt chart with the implementation sprints.
+Built: new tab "Gantt 📅".
+- Hero KPIs: overall % done, tasks done, late tasks, next milestone with a countdown.
+- 7 two-week sprint cards (S0 Prototype + access → S6 Rollout, Nov 2 – Feb 12), with the current sprint highlighted.
+- Gantt of 22 tasks in 6 workstreams (Data + integrations, Master, SmartTool, Channels, Gamification, Rollout + compliance):
+  - month, sprint and week headers; a today line; 6 milestones (EL $95 offer ends, Black Friday, Cash Grab payout, Master live, pilot review, go-live); a Dec 24–Jan 1 holiday freeze;
+  - bars styled for done / in progress (fill = %) / planned / late.
+- Click a bar for deliverables, definition of done, depends on / unblocks, and a status switch (saved in the browser).
+- Workstream filter, zoom (quarter / month / week), jump to today, CSV export.
+- Pip answers "next milestone" and "what's in this sprint".
+Owners are roles; dates are a suggested plan.
+
+## 151. OutboundOS SOP video (storytelling, AIDA, employee benefits)
+Request: an SOP video on how to use OutboundOS, easier to understand, told as a story, with emphasis on employee benefits in the gamification part, using the AIDA model.
+Built: video/OutboundOS-SOP-story.mp4 (2:43, 1080p, narrated with offline Piper TTS). It follows Maria, a CSR, through 15 scenes:
+- Attention: the missed chance in the funnel; benchmark + goal tracker.
+- Interest: home-age call with caller-ID property match; Customer 360; Live Coach.
+- Desire: ₱100 per cross-booking paid daily, no limit (2 extra a day ≈ ₱4,400 in a 22-day month); daily contests; objection points → prizes; leaderboard recognition; CSR DNA rewards; Pip.
+- Action: 4 steps to start today; leaders follow the Gantt.
+On screen: an AIDA progress bar, captions and a highlight ring. Narration script in docs/OUTBOUNDOS-SOP-VIDEO.md.
+Also fixed: Pip's "today's contest" now reads the contest from the tab you're on.
+
+## 152. OutboundOS: SOP video at the top
+Request: add the video to the top.
+Built:
+- A "Start here · SOP video" card at the top of Master: the 2:43 video with a poster frame and AIDA chapter buttons (Attention 0:00, Interest 0:33, Desire · your rewards 1:06, Action 2:15) that jump and play.
+- "Hide video" collapses it (remembered); a header button "🎬 Watch the 3-min video" reopens and plays it from any tab.
+- Pip has a "Watch the how-to video" chip, and there's a guide step.
+The video is published with the artifact as video/OutboundOS-SOP-story.mp4 (+ poster). A downloaded copy of the HTML needs the video folder beside it.
+
+## 153. SOP video: minimize option
+Request: add an option to minimize the video.
+Built: "▭ Minimize (keep watching while you work)" floats the player bottom-right as a mini player that keeps playing while you scroll or switch tabs. It has a header with "⤢ Expand" (back to the top of Master) and "✕" (stop and dock back). While minimized, the Master card shrinks to a one-line bar with "Expand here".
+
+## 154. Master subtitle as jump links
+Request: make "call center metrics · live funnel · pipeline · built with Claude" clickable, scrolling to each part.
+Done: the first three words are mint, underlined links that smooth-scroll to the KPI tiles, the LIVE FUNNEL and the Pipeline, with a brief glow on the target. "built with Claude" stays plain text.
+
+## 155. Optional vertical menu
+Request: add the option of a vertical menu as well.
+Built: a "▥ Vertical menu" button in the header switches to a left sidebar (remembered per browser).
+- The sidebar lists the 5 tabs; the active tab expands its sections. Sections scroll with a glow or open the right SmartTool session:
+  - Master: video, benchmark, goals, metrics, best offers, live funnel, pipeline;
+  - SmartTool: Live Coach, outbound, home-age, objection points, in-app, Customer 360, playbook;
+  - Cash Grab: today's contest, leaderboard, log, ideas;
+  - CSR DNA: daily progress, questionnaire, team;
+  - Gantt: sprints, chart, details.
+- "⇄ Horizontal menu" switches back.
+- On phones the sidebar becomes a ☰ slide-out drawer with a scrim and Close. Pip moves right of the sidebar on desktop.
+
+## 156. OutboundOS docs in Markdown for GitHub + Vercel
+Request: make it MD format for GitHub and Vercel.
+Done:
+- docs/OUTBOUNDOS.md: full GitHub-ready docs (what's inside per tab, the SOP for CSRs and leaders, CSR benefits, sample vs real data, browser storage keys, privacy, run locally, deploy on GitHub + Vercel, structure, roadmap, sources).
+- The README links OutboundOS at the top.
+- vercel.json rewrites /outboundos → /OutboundOS.html.
+- A standalone package, OutboundOS-github-vercel.zip (outboundos/ with index.html, video/, docs/, README.md, vercel.json, .gitignore), ready to push as its own repo and import in Vercel (Framework: Other, no build).
+
+## 157. Spin-the-wheel rewards on every booking
+Request: add a virtual wheel to rewards. Every booking pops up a spin-the-wheel on screen, and prizes accumulate until redeemed.
+Built:
+- Pop-up wheel (10 prizes, weighted) with a pointer, blinking bulbs, a SPIN hub, a 4-second spin, confetti and Pip cheering. Prizes and odds: ₱20 25%, +50 pts 20%, ₱50 12%, shout-out 12%, 15-min break 10%, +100 pts 8%, coffee 5%, ₱100 5%, 30-min early out 2%, ₱500 jackpot 1%. Average cash ≈ ₱28.50 per spin. Spins queue ("2 spins left") or can be saved for later.
+- Triggers: a cross-booking logged in Cash Grab; "Booked after objection" in the objection points call; a booking or cross-booking on the home-age call (the auto-play pauses for the spin).
+- Cash Grab "Spin-the-wheel rewards" card:
+  - per CSR: spins waiting, cash and perks to redeem, redeemed, a Spin now button, the "My prizes" list with Redeem per prize and "Redeem all cash prizes";
+  - a team table, and an odds table with average cost.
+- Points prizes are added straight to the objection-points prize bank.
+- CSR DNA daily cards show wheel spins and prizes. Pip has a "My wheel prizes" chip. There's a vertical-menu link and a guide step. Saved in localStorage os-wheel.
+Docs: docs/OUTBOUNDOS.md and the package README updated.
+
+## 158. Test CSR for onboarding (practice wheel)
+Request: create a test CSR and show the wheel when it's chosen, for onboarding.
+Built: "🎓 Test CSR (onboarding)".
+- Where to pick it: the wheel card's CSR picker, the Cash Grab "Log a cross-booking" CSR list and the objection points call CSR list. There's also a "🎓 Try it as Test CSR" button on the wheel card.
+- Choosing it opens the wheel right away in practice mode: a striped "Onboarding practice · prizes are not real" banner, unlimited spins (∞), and practice wins tagged "Practice" with no Redeem.
+- Practice cross-bookings run the same qualification checks but log nothing, pay nothing and leave the KPIs and leaderboards unchanged; they still pop up the wheel.
+- The test CSR never appears in the team table, leaderboards, payouts or the prize bank.
+
+## 159. 4C Retention: New Workflow tab with the Customer.io email library
+Request: on the 4C Retention Ecosystem, add a New Workflow tab with the attached HTML email library.
+Built:
+- A new 4C RETENTION tab "New Workflow" (NEW badge) after Transactional Workflow. It has a header, a flow strip, and the attached library embedded full height. The library file is saved as emails/email-library.html and loads only when the tab opens.
+  - Flow strip: Appointment Confirmed v1/v2 → Technician On The Way v1/v2 → Job Completed; 8 cross-sell emails after the last completed job, by trade.
+  - Library features: preview desktop/mobile, HTML view, variables, copy.
+- "Open full screen ↗" opens the library on its own page. Deep link #new-workflow. Added to the site search.
+To check: two cross-sell offers differ from the home-age offer sheet (Cleaning "$100 OFF First Deep Cleaning" vs "50% OFF standard cleaning after Deep"; Handyman "$1 Every 3rd Hour" vs "FREE every 3rd hour").
+
+## 160. 4C Retention: Outbound OS tab
+Request: add an Outbound OS tab to the 4C Retention Ecosystem with OutboundOS in it.
+Built: a 4C RETENTION tab "Outbound OS" (NEW badge) after New Workflow.
+- It has a header summarizing the 5 OutboundOS tabs, "Open full screen ↗", and the full OutboundOS embedded at viewport height, loaded on first open. Everything works inside it: tabs, video, Pip, wheel.
+- Deep link #outbound-os; added to the site search.
+- OutboundOS.html and its video are published with the ecosystem artifact.
+The standalone OutboundOS artifact remains.
+OutboundOS.html now starts with <!doctype html> (standards mode when served as a supporting file or on Vercel).
